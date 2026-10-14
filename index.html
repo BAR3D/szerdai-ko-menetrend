@@ -4,6 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <meta name="robots" content="noindex,nofollow">
+<meta http-equiv="Cache-Control" content="no-cache">
 <style>:root{padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}body{margin:0}img{max-width:100%}[hidden]{display:none!important}</style>
 <title>Szerdai KO-menetrend</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -108,6 +109,8 @@ section.block{display:grid;grid-template-columns:160px 1fr;gap:0 26px;margin-blo
 .bag button{font:600 13px/1 var(--f-body);background:var(--glass);color:var(--ink);border:1px solid var(--glass-hi);border-radius:2px;padding:9px 14px;cursor:pointer}
 .bag button:first-of-type{background:linear-gradient(180deg,var(--gold-hi),var(--gold));color:#1a1408;border-color:var(--gold)}
 
+.chip.upd{background:linear-gradient(180deg,var(--gold-hi),var(--gold));color:#1a1408;border-color:var(--gold);animation:pulse 1.6s ease-in-out infinite}
+@keyframes pulse{50%{box-shadow:0 0 0 6px rgba(216,180,106,.25)}}
 footer{color:var(--muted);font-size:13px;padding-block:28px;max-width:70ch}
 
 @media (max-width:720px){.stats{grid-template-columns:repeat(2,minmax(0,1fr))}}
@@ -148,6 +151,7 @@ footer{color:var(--muted);font-size:13px;padding-block:28px;max-width:70ch}
     <button class="chip" id="f-main" aria-pressed="false">Csak fő versenyek</button>
     <span class="spacer"></span>
     <span class="now" id="now"></span>
+    <button class="chip upd" id="upd" type="button" hidden>Új változat · Frissítés</button>
   </div>
 
   <div class="legend">
@@ -307,6 +311,11 @@ document.getElementById("f-main").addEventListener("click",e=>{onlyMain=!onlyMai
 document.getElementById("b-main").addEventListener("click",()=>{all.filter(t=>t.mark==="f").forEach(t=>picked.add(t.id));save();render()});
 document.getElementById("b-clear").addEventListener("click",()=>{picked.clear();save();render()});
 render(); setInterval(render,60000);
+// új változat figyelése: a version.json-t gyorsítótár nélkül kérjük le
+const VERSION="3";
+async function checkVer(){try{const r=await fetch("version.json?t="+Date.now(),{cache:"no-store"});if(!r.ok)return;const v=(await r.json()).v;
+  if(v&&v!==VERSION){const b=document.getElementById("upd");b.hidden=false;b.onclick=()=>{location.href=location.pathname+"?v="+v}}}catch(e){}}
+checkVer();setInterval(checkVer,60000);document.addEventListener("visibilitychange",()=>{if(!document.hidden)checkVer()});
 </script>
 <script>
 // lebegő zsetonok és kártyák a csempefal előtt
