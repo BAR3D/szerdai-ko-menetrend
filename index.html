@@ -4,9 +4,8 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <meta name="robots" content="noindex,nofollow">
-<meta http-equiv="Cache-Control" content="no-cache">
 <style>:root{padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}body{margin:0}img{max-width:100%}[hidden]{display:none!important}</style>
-<title>Szerdai KO-menetrend</title>
+<title>Heti KO-menetrend</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,500;0,600;1,500&family=Big+Shoulders+Display:wght@600;800;900&family=Figtree:wght@400;500;600;700&family=JetBrains+Mono:wght@500;700&display=swap">
@@ -76,7 +75,7 @@ section.block{display:grid;grid-template-columns:160px 1fr;gap:0 26px;margin-blo
 .rail .name{position:sticky;top:160px;margin-top:12px;font:italic 500 20px/1.15 var(--f-display);color:var(--gold)}
 .rows{display:grid;gap:4px;min-width:0}
 
-.row{position:relative;overflow:hidden;display:grid;grid-template-columns:26px 58px 62px 78px 1fr auto;gap:12px;align-items:center;padding:10px 12px;border-radius:2px;cursor:pointer;
+.row{position:relative;overflow:hidden;display:grid;grid-template-columns:26px 58px 62px 78px 1fr auto 28px;gap:12px;align-items:center;padding:10px 12px;border-radius:2px;cursor:pointer;
   background:linear-gradient(180deg,rgba(255,255,255,.035),rgba(255,255,255,.01));border:1px solid rgba(255,255,255,.05)}
 .row::before{content:"";position:absolute;top:0;bottom:0;left:-60%;width:40%;background:linear-gradient(100deg,transparent,rgba(255,255,255,.13),transparent);transform:skewX(-18deg);pointer-events:none;opacity:0}
 .row:hover{border-color:rgba(216,180,106,.4)}
@@ -111,6 +110,86 @@ section.block{display:grid;grid-template-columns:160px 1fr;gap:0 26px;margin-blo
 
 .chip.upd{background:linear-gradient(180deg,var(--gold-hi),var(--gold));color:#1a1408;border-color:var(--gold);animation:pulse 1.6s ease-in-out infinite}
 @keyframes pulse{50%{box-shadow:0 0 0 6px rgba(216,180,106,.25)}}
+/* napok fülei */
+.days{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:6px;margin-block:8px 18px}
+.day{position:relative;text-align:left;padding:12px 10px;border:1px solid var(--glass-hi);border-radius:2px;cursor:pointer;color:var(--ink);
+  background:linear-gradient(150deg,rgba(255,255,255,.08),rgba(255,255,255,.015) 60%);backdrop-filter:blur(6px);display:grid;gap:4px;min-width:0}
+.day:hover{border-color:var(--gold)}
+.day[aria-selected="true"]{border-color:var(--gold);background:linear-gradient(160deg,rgba(247,226,168,.24),rgba(216,180,106,.06) 70%);box-shadow:inset 0 1px 0 rgba(255,255,255,.2),0 0 26px -10px rgba(216,180,106,.8)}
+.dn{font:600 20px/1 var(--f-display)}
+.dn .full{}
+.dm{font:500 11px/1.25 var(--f-mono);color:var(--muted);overflow-wrap:anywhere}
+.today{font:700 9px/1 var(--f-mono);font-style:normal;letter-spacing:.1em;text-transform:uppercase;color:#1a1408;background:var(--gold);padding:3px 5px;border-radius:2px;margin-left:6px;vertical-align:middle}
+/* gombok */
+.btn{font:600 13px/1 var(--f-body);display:inline-flex;align-items:center;gap:6px;padding:10px 14px;border-radius:2px;cursor:pointer;color:var(--ink);background:var(--glass);border:1px solid var(--glass-hi)}
+.btn:hover{border-color:var(--gold)}
+.btn.gold,.add .gold{background:linear-gradient(180deg,var(--gold-hi),var(--gold));color:#1a1408;border-color:var(--gold)}
+.btn.ghost{background:transparent}
+/* képbeolvasó */
+.imp{position:relative;z-index:2;padding:20px;border:1px dashed rgba(216,180,106,.45);border-radius:4px;background:linear-gradient(155deg,rgba(255,255,255,.06),rgba(255,255,255,.01));backdrop-filter:blur(6px);margin-bottom:14px}
+.imp.drag{border-style:solid;border-color:var(--gold-hi);background:var(--gold-soft)}
+.imp-h{display:flex;flex-wrap:wrap;gap:14px 24px;justify-content:space-between;align-items:flex-end}
+.imp h2{font:600 28px/1 var(--f-display);margin:0 0 6px;color:var(--gold-hi)}
+.imp p{margin:0;color:var(--muted);font-size:14px;max-width:60ch}
+.imp-btns{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
+.imp-thumbs{display:flex;gap:8px;flex-wrap:wrap}
+.imp-thumbs:not(:empty){margin-top:14px}
+.imp-thumbs img{height:64px;border-radius:2px;border:1px solid var(--glass-hi)}
+.imp-status{margin-top:10px!important;color:var(--gold-hi)!important}
+.imp-status:empty{display:none}
+.imp-list{display:grid;gap:4px;margin-top:10px}
+.cand{display:grid;grid-template-columns:22px 92px 112px 82px minmax(0,1fr) 70px auto;gap:8px;align-items:center;padding:6px 8px;border-radius:2px;background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.06);opacity:.6}
+.cand.on{opacity:1;border-color:rgba(216,180,106,.4)}
+.cand input[type=checkbox]{accent-color:var(--gold);width:17px;height:17px}
+.dupe{font:600 10px/1 var(--f-mono);text-transform:uppercase;letter-spacing:.06em;color:var(--shot)}
+.imp-foot{display:flex;flex-wrap:wrap;gap:8px;margin-top:12px}
+.imp-foot:has(#imp-add[hidden]){display:none}
+input:not([type=checkbox]),select{font:500 13px/1.2 var(--f-body);color:var(--ink);background:rgba(0,0,0,.35);border:1px solid var(--glass-hi);border-radius:2px;padding:8px;min-width:0;width:100%}
+input:focus-visible,select:focus-visible{outline:2px solid var(--gold-hi);outline-offset:1px}
+.fg{display:grid;gap:4px;min-width:0}
+.fg label{font:600 10.5px/1.2 var(--f-mono);letter-spacing:.1em;text-transform:uppercase;color:var(--muted)}
+.fg.inl{display:flex;align-items:center;gap:8px}.fg.inl select{width:auto}
+/* tét szűrő */
+.stakes{display:flex;flex-wrap:wrap;gap:6px;align-items:center;width:100%}
+.slbl{font:700 10.5px/1 var(--f-mono);letter-spacing:.14em;text-transform:uppercase;color:var(--muted);margin-right:4px}
+.chip.st{padding:7px 11px;font-size:12.5px}
+/* plusz / mínusz */
+.plus{margin-top:14px;font:600 13px/1 var(--f-body);color:var(--gold-hi);background:transparent;border:1px solid rgba(216,180,106,.5);border-radius:2px;padding:9px 12px;cursor:pointer;display:inline-flex;gap:6px;align-items:center}
+.plus span{font-size:18px;line-height:0}
+.plus:hover,.plus[aria-expanded="true"]{background:var(--gold-soft)}
+.minus{width:28px;height:28px;border-radius:2px;border:1px solid rgba(255,255,255,.14);background:transparent;color:var(--muted);font:600 18px/1 var(--f-body);cursor:pointer;display:grid;place-items:center}
+.minus:hover{color:var(--shot);border-color:var(--shot);background:var(--shot-soft)}
+.add{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px;padding:14px;margin-top:6px;border:1px solid rgba(216,180,106,.45);border-radius:2px;background:rgba(216,180,106,.06)}
+.add .wide{grid-column:span 2}
+.add .cur{display:grid;grid-template-columns:56px 1fr;gap:4px}
+.add .fa{grid-column:1/-1;display:flex;flex-wrap:wrap;gap:8px;align-items:center}
+.add button{font:600 13px/1 var(--f-body);padding:10px 14px;border-radius:2px;cursor:pointer;color:var(--ink);background:transparent;border:1px solid var(--glass-hi)}
+.err{color:var(--shot);font-size:13px}
+.dayempty{position:relative;z-index:2;padding:22px;border:1px solid var(--glass-hi);border-radius:4px;background:var(--glass);margin-block:20px;display:grid;gap:12px}
+.dayempty p{margin:0}.dayempty b{color:var(--gold-hi)}
+.dayfoot{display:flex;justify-content:flex-end}
+.bag #b-undo{margin-left:8px;padding:6px 10px}
+@media (max-width:720px){
+  .days{grid-template-columns:repeat(7,minmax(64px,1fr));overflow-x:auto;padding-bottom:4px}
+  .dn .full{display:none}
+  .cand{grid-template-columns:22px 1fr 1fr 1fr;}
+  .cand .nm{grid-column:2 / -1}
+  .add{grid-template-columns:1fr 1fr}.add .wide{grid-column:1/-1}
+}
+
+/* játékforma-szűrő */
+.more{position:relative;z-index:2;margin-top:10px;border:1px solid var(--glass-hi);border-radius:2px;background:var(--glass);backdrop-filter:blur(6px)}
+.more summary{cursor:pointer;padding:12px 14px;font:600 14px/1.2 var(--f-body);list-style-position:inside}
+.more summary span{font:600 11px/1 var(--f-mono);color:var(--gold);margin-left:8px;letter-spacing:.06em}
+.more-in{display:grid;gap:16px;padding:4px 14px 16px}
+.flbl{font:600 10.5px/1.3 var(--f-mono);letter-spacing:.1em;text-transform:uppercase;color:var(--muted)}
+.fx-chips{display:flex;flex-wrap:wrap;gap:6px}
+.chip.ex[aria-pressed="true"]{background:var(--shot-soft);color:var(--shot);border-color:var(--shot);text-decoration:line-through}
+.combo{display:flex;flex-wrap:wrap;gap:8px}.combo select{width:auto;flex:1 1 180px}
+.rules{display:flex;flex-wrap:wrap;gap:6px}
+.rule{display:inline-flex;gap:8px;align-items:center;font:600 12.5px/1 var(--f-body);padding:6px 6px 6px 10px;border:1px solid var(--shot);color:var(--shot);background:var(--shot-soft);border-radius:2px}
+.rule button{background:transparent;border:0;color:inherit;font-size:16px;cursor:pointer;padding:0 4px}
+.hint{color:var(--muted);font-size:13px}
 footer{color:var(--muted);font-size:13px;padding-block:28px;max-width:70ch}
 
 @media (max-width:720px){.stats{grid-template-columns:repeat(2,minmax(0,1fr))}}
@@ -119,7 +198,8 @@ footer{color:var(--muted);font-size:13px;padding-block:28px;max-width:70ch}
   .rail .t,.rail .name{position:static}
   .rail{display:flex;align-items:baseline;gap:14px;flex-wrap:wrap}
   .rail .t{font-size:40px}.rail .t small{display:inline;font-size:20px;margin-left:6px}
-  .row{grid-template-columns:22px 52px 1fr auto;gap:4px 10px}
+  .row{grid-template-columns:22px 52px 1fr auto 28px;gap:4px 10px}
+  .row .minus{grid-column:5;grid-row:1 / span 2}
   .row .time{grid-column:2;grid-row:1}
   .row .site{grid-column:2;grid-row:2;font-size:10px}
   .row input{grid-row:1 / span 2}
@@ -137,11 +217,28 @@ footer{color:var(--muted);font-size:13px;padding-block:28px;max-width:70ch}
 
 <div class="wrap">
   <header class="hero">
-    <div class="eyebrow">Szerda · knockout-fókusz · GG · PokerStars · WPT</div>
-    <h1>Szerdai <i>KO</i>-menetrend</h1>
-    <p class="lede">Egy teljes szerdai grind délután egytől hajnali kettőig, 15 asztalra felfutva. Csak bounty- és mystery-versenyek. Jelöld be, mit indítasz, és alul látod, mennyi a napi buy-in.</p>
+    <div class="eyebrow">7 napos terv · knockout-fókusz · GG · PokerStars · WPT</div>
+    <h1>Heti <i>KO</i>-menetrend</h1>
+    <p class="lede">A hét minden napjára külön terv. A szerda egy kész, 60 versenyes bounty-lista délután egytől hajnali kettőig, a többi napot te töltöd fel: a „+” gombbal, egy lobbi-képernyőképből vagy egy lefotózott listából. Jelöld be, mit indítasz, és alul látod a napi buy-int.</p>
     <div class="stats" id="stats"></div>
   </header>
+
+  <nav class="days" id="days" role="tablist" aria-label="A hét napjai"></nav>
+
+  <section class="imp" id="imp" aria-label="Beolvasás képből">
+    <div class="imp-h">
+      <div><h2>Beolvasás képből</h2><p>Fotózd le a lobbit vagy a listát, vagy válassz képernyőképet a képeid közül. A szöveget a saját eszközöd olvassa ki, a kép nem kerül fel sehova.</p></div>
+      <div class="imp-btns">
+        <label class="btn gold" for="imp-cam">Fotó készítése</label><input id="imp-cam" type="file" accept="image/*" capture="environment" hidden>
+        <label class="btn" for="imp-file">Kép a galériából</label><input id="imp-file" type="file" accept="image/*" multiple hidden>
+        <span class="fg inl"><label for="imp-site">Ha nem derül ki, melyik terem:</label><select id="imp-site"><option value="GG">GG</option><option value="Stars">PokerStars</option><option value="WPT">WPT</option></select></span>
+      </div>
+    </div>
+    <div class="imp-thumbs" id="imp-thumbs"></div>
+    <p class="imp-status" id="imp-status" aria-live="polite"></p>
+    <div class="imp-list" id="imp-list"></div>
+    <div class="imp-foot"><button type="button" class="btn gold" id="imp-add" hidden>Kijelöltek hozzáadása</button><button type="button" class="btn ghost" id="imp-clear">Találatok törlése</button></div>
+  </section>
 
   <div class="controls" role="toolbar" aria-label="Szűrők">
     <button class="chip" data-site="all" aria-pressed="true" id="f-all">Mind</button>
@@ -152,7 +249,19 @@ footer{color:var(--muted);font-size:13px;padding-block:28px;max-width:70ch}
     <span class="spacer"></span>
     <span class="now" id="now"></span>
     <button class="chip upd" id="upd" type="button" hidden>Új változat · Frissítés</button>
+    <div class="stakes" id="stakes" role="group" aria-label="Buy-in szűrő"></div>
   </div>
+
+  <details class="more" id="more">
+    <summary>Játékforma és kombinált szűrés <span id="more-n"></span></summary>
+    <div class="more-in">
+      <div class="fg"><span class="flbl">Ezeket a játékformákat teljesen kizárod</span><div class="fx-chips" id="fx-chips" role="group" aria-label="Kizárt játékformák"></div></div>
+      <div class="fg"><span class="flbl">Kombinált szabály: csak ennél a játékformánál zárd ki ezt a tétet</span>
+        <div class="combo"><select id="r-f" aria-label="Játékforma"></select><select id="r-s" aria-label="Tétsáv"></select><button type="button" class="btn gold" id="r-add">Szabály hozzáadása</button></div>
+        <div class="rules" id="rules"></div></div>
+      <div><button type="button" class="btn ghost" id="f-reset">Minden szűrő törlése</button> <span class="hint" id="hidden-n"></span></div>
+    </div>
+  </details>
 
   <div class="legend">
     <span><span class="tag f">Fő</span> fő verseny, ezekre építsd a napot</span>
@@ -160,14 +269,20 @@ footer{color:var(--muted);font-size:13px;padding-block:28px;max-width:70ch}
     <span>¥-es versenyek: kb. 7 ¥ = 1 $</span>
   </div>
 
-  <main id="blocks"></main>
+  <div class="dayempty" id="dayempty" hidden>
+    <p><b id="dayempty-name"></b>: erre a napra még nincs verseny. Kezdheted egy kész listával, vagy olvass be egy képet fent.</p>
+    <div class="imp-btns"><button type="button" class="btn gold" id="copy-wed">Szerdai lista bemásolása</button><button type="button" class="btn" id="copy-prev">Előző kitöltött nap bemásolása</button></div>
+  </div>
 
-  <footer>Az időpontok helyi idő szerint értendők. A ¥-es nevezési díjakat kb. 7 ¥ = 1 $ árfolyammal számoltuk át. A Weekly Golden Bounty Day 1-ből a sok flight közül egyet érdemes lejátszani. A bejelöléseid csak ebben a böngészőben maradnak meg.</footer>
+  <main id="blocks"></main>
+  <div class="dayfoot"><button type="button" class="btn ghost" id="d-reset">Nap ürítése</button></div>
+
+  <footer>Az időpontok helyi idő szerint értendők. A ¥-es nevezési díjakat kb. 7 ¥ = 1 $ árfolyammal számoltuk át. A Weekly Golden Bounty Day 1-ből a sok flight közül egyet érdemes lejátszani. A heti terved, a felvett és törölt versenyek és a bejelölések csak ezen az eszközön, ebben a böngészőben maradnak meg.</footer>
 </div>
 
 <div class="bag" aria-live="polite">
   <div class="in">
-    <div><span class="lbl">Bejelölve</span><b id="b-count">0</b></div>
+    <div><span class="lbl"><span id="b-day">Nap</span> · bejelölve</span><b id="b-count">0</b></div>
     <div><span class="lbl">Napi buy-in</span><b id="b-sum">0 $</b></div>
     <div class="warn" id="b-warn">Koppints egy sorra, hogy hozzáadd a napi csomagodhoz.</div>
     <button id="b-main" type="button">Fő versenyek kijelölése</button>
@@ -243,53 +358,131 @@ const BLOCKS=[
   ["01:30","GG","$25","Last Call Bounty Hyper"]]}
 ];
 const CNY=7;
-const all=[];
+const DAYS=["Hétfő","Kedd","Szerda","Csütörtök","Péntek","Szombat","Vasárnap"];
+const SITES=[["GG","GG"],["Stars","PokerStars"],["WPT","WPT"]];
+const esc=s=>String(s).replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+const toMin=time=>{let [h,m]=time.split(":").map(Number);let v=h*60+m;if(h<6)v+=1440;return v};
+const blockOf=min=>min<900?0:min<1080?1:min<1260?2:3;
+function enrich(t){
+  const yen=t.buy.startsWith("¥"),raw=parseFloat(t.buy.slice(1))||0,min=toMin(t.time);
+  return {...t,yen,usd:yen?raw/CNY:raw,min,bi:blockOf(min)};
+}
+// a szerdai lista a kiinduló sablon
+const TEMPLATE=[];
 BLOCKS.forEach((b,bi)=>b.items.forEach((it,i)=>{
-  const [time,site,buy,title,mark,note]=it;
-  const yen=buy.startsWith("¥"); const raw=parseFloat(buy.slice(1));
-  const usd=yen?raw/CNY:raw;
-  let [h,m]=time.split(":").map(Number); let min=h*60+m; if(h<6) min+=1440;
-  all.push({id:bi+"-"+i,bi,time,site,buy,title,mark,note,yen,usd,min});
+  const [time,site,buy,title,mark,note]=it;TEMPLATE.push({id:bi+"-"+i,time,site,buy,title,mark:mark||"",note:note||""});
 }));
-
-let picked=new Set(); try{picked=new Set(JSON.parse(localStorage.getItem("ko-szerda")||"[]"))}catch(e){}
-let site="all", onlyMain=false;
-const save=()=>{try{localStorage.setItem("ko-szerda",JSON.stringify([...picked]))}catch(e){}};
+const KEY="ko-het-v1";
+let state=null;
+try{state=JSON.parse(localStorage.getItem(KEY)||"null")}catch(e){}
+if(!state||!Array.isArray(state.days)){
+  state={days:DAYS.map((_,d)=>({items:d===2?TEMPLATE.map(t=>({...t})):[],picked:[]}))};
+  try{state.days[2].picked=JSON.parse(localStorage.getItem("ko-szerda")||"[]")}catch(e){}
+}
+const save=()=>{try{localStorage.setItem(KEY,JSON.stringify(state))}catch(e){}};
 const fmt=v=>(Math.round(v*100)/100).toLocaleString("hu-HU",{minimumFractionDigits:v%1?2:0,maximumFractionDigits:2})+" $";
 
+// a nap hajnali 6-ig az előző naphoz tartozik
+function todayIdx(){const d=new Date();if(d.getHours()<6)d.setDate(d.getDate()-1);return (d.getDay()+6)%7}
 function nowMin(){const d=new Date();let m=d.getHours()*60+d.getMinutes();if(d.getHours()<6)m+=1440;return m}
-function isWed(){const d=new Date();const day=d.getDay();return day===3||(day===4&&d.getHours()<6)}
 
-document.getElementById("stats").innerHTML=[
- [all.length,"verseny"],[all.filter(t=>t.mark==="f").length,"fő verseny"],
- ["13 óra","13:00 – 02:00"],[3,"terem: GG, Stars, WPT"]
-].map(([n,l])=>`<div class="stat"><b>${n}</b>${l}</div>`).join("");
+const STAKES=[["s1","≤ 11 $",0,11],["s2","11–25 $",11.001,25],["s3","25–55 $",25.001,55],["s4","55 $ fölött",55.001,1e9]];
+const stakes=new Set();
+const inStake=t=>!stakes.size||STAKES.some(([k,,lo,hi])=>stakes.has(k)&&t.usd>=lo&&t.usd<=hi);
+// játékformák a verseny nevéből; egy versenynek több formája is lehet
+const FORMATS=[
+ ["mystery","Mystery",n=>/mystery|wonderbox|surprise|windfall|lucky/i.test(n)],
+ ["pko","PKO / bounty (nem mystery)",n=>!/mystery|wonderbox|surprise|windfall|lucky/i.test(n)],
+ ["hyper","Hyper",n=>/hyper/i.test(n)],
+ ["turbo","Turbo",n=>/turbo|rapid|fast/i.test(n)&&!/hyper/i.test(n)],
+ ["deep","Deepstack",n=>/deep|fifty stack|forty stack/i.test(n)],
+ ["short","Short-handed (7-max vagy kevesebb)",n=>/[5-7]-max|six|fast 6/i.test(n)],
+ ["multi","Többnapos (Day 1)",n=>/day ?1|flight/i.test(n)]];
+const fmtOf=t=>FORMATS.filter(f=>f[2](t.title)).map(f=>f[0]);
+const stakeOf=t=>(STAKES.find(([,,lo,hi])=>t.usd>=lo&&t.usd<=hi)||STAKES[0])[0];
+const FKEY="ko-het-szurok";
+let excl=new Set(),rules=[];
+try{const f=JSON.parse(localStorage.getItem(FKEY)||"null");if(f){excl=new Set(f.excl||[]);rules=f.rules||[]}}catch(e){}
+const saveF=()=>{try{localStorage.setItem(FKEY,JSON.stringify({excl:[...excl],rules}))}catch(e){}};
+function passFmt(t){const fs=fmtOf(t),sk=stakeOf(t);
+  if(fs.some(f=>excl.has(f)))return false;
+  return !rules.some(r=>fs.includes(r.f)&&r.s===sk);}
+const fLabel=k=>FORMATS.find(f=>f[0]===k)[1].replace(/ \(.*\)/,""),sLabel=k=>STAKES.find(x=>x[0]===k)[1];
+function renderFmt(){
+  document.getElementById("fx-chips").innerHTML=FORMATS.map(([k,l])=>`<button class="chip ex" type="button" id="fx-${k}" data-fmt="${k}" aria-pressed="${excl.has(k)}">${l}</button>`).join("");
+  document.getElementById("rules").innerHTML=rules.length?rules.map((r,i)=>`<span class="rule">${fLabel(r.f)} · ${sLabel(r.s)} kizárva <button type="button" data-rule="${i}" aria-label="Szabály törlése">×</button></span>`).join(""):'<span class="hint">Még nincs kombinált szabály.</span>';
+  const n=excl.size+rules.length;document.getElementById("more-n").textContent=n?`${n} aktív`:"nincs aktív";
+}
+let day=todayIdx(), site="all", onlyMain=false, openForm=-1, undo=null, undoTimer=0;
+try{const h=location.hash.slice(1);const i=["hetfo","kedd","szerda","csutortok","pentek","szombat","vasarnap"].indexOf(h);if(i>=0)day=i}catch(e){}
+const D=()=>state.days[day];
+const items=()=>D().items.map(enrich).sort((a,b)=>a.min-b.min);
 
+function renderTabs(){
+  document.getElementById("days").innerHTML=DAYS.map((n,i)=>{
+    const d=state.days[i];const sum=d.items.filter(t=>d.picked.includes(t.id)).reduce((s,t)=>s+enrich(t).usd,0);
+    return `<button class="day" type="button" role="tab" id="d-${i}" data-day="${i}" aria-selected="${i===day}">
+      <span class="dn">${n.slice(0,3)}<span class="full">${n.slice(3)}</span>${i===todayIdx()?'<i class="today">ma</i>':""}</span>
+      <span class="dm">${d.items.length} verseny${d.picked.length?` · ${fmt(sum)}`:""}</span></button>`}).join("");
+}
+function renderStats(){
+  let wk=0,wkSum=0;state.days.forEach(d=>d.items.forEach(t=>{if(d.picked.includes(t.id)){wk++;wkSum+=enrich(t).usd}}));
+  const its=D().items;
+  document.getElementById("stats").innerHTML=[
+   [its.length,`verseny · ${DAYS[day].toLowerCase()}`],[its.filter(t=>t.mark==="f").length,"fő verseny ezen a napon"],
+   [wk,"bejelölve a héten"],[fmt(wkSum),"heti buy-in"]
+  ].map(([n,l])=>`<div class="stat"><b>${n}</b>${l}</div>`).join("");
+}
+function formHtml(bi){
+  const def=["13:30","15:30","18:30","21:30"][bi];
+  return `<form class="add" data-bi="${bi}" novalidate>
+    <div class="fg"><label for="a-time">Kezdés</label><input id="a-time" name="time" type="time" value="${def}" required></div>
+    <div class="fg"><label for="a-site">Terem</label><select id="a-site" name="site">${SITES.map(([v,l])=>`<option value="${v}">${l}</option>`).join("")}</select></div>
+    <div class="fg buyin"><label for="a-buy">Buy-in</label><span class="cur"><select id="a-cur" name="cur" aria-label="Pénznem"><option>$</option><option>¥</option></select><input id="a-buy" name="buy" inputmode="decimal" placeholder="22" required></span></div>
+    <div class="fg wide"><label for="a-title">Verseny neve</label><input id="a-title" name="title" placeholder="pl. Bounty Builder" maxlength="60" required></div>
+    <div class="fg"><label for="a-mark">Jelölés</label><select id="a-mark" name="mark"><option value="">Nincs</option><option value="f">Fő verseny</option><option value="s">Shot</option></select></div>
+    <div class="fg wide"><label for="a-note">Megjegyzés (nem kötelező)</label><input id="a-note" name="note" maxlength="60"></div>
+    <div class="fa"><button type="submit" class="gold">Hozzáadás</button><button type="button" data-act="cancel">Mégse</button><span class="err" id="a-err" role="alert"></span></div>
+  </form>`;
+}
 function render(){
-  const nm=isWed()?nowMin():-1;
-  const vis=all.filter(t=>(site==="all"||t.site===site)&&(!onlyMain||t.mark));
+  renderTabs();renderStats();
+  const isToday=day===todayIdx(),nm=isToday?nowMin():-1;
+  const vis=items().filter(t=>(site==="all"||t.site===site)&&(!onlyMain||t.mark)&&inStake(t)&&passFmt(t));
   const next=nm<0?null:vis.find(t=>t.min>=nm);
-  document.getElementById("now").innerHTML=nm<0?"Ma nem szerda van, a teljes nap látszik"
+  const picked=new Set(D().picked);
+  const hidden=D().items.length-vis.length;
+  document.getElementById("hidden-n").textContent=hidden?`${hidden} verseny elrejtve a szűrők miatt`:"";
+  document.getElementById("now").innerHTML=!isToday?`${DAYS[day]} terve · nem a mai nap`
     :next?`Most ${new Date().toTimeString().slice(0,5)} · következő: <b>${next.time} ${next.site}</b>`:"A mai menetrend véget ért";
+  const empty=!D().items.length;
+  document.getElementById("dayempty").hidden=!empty;
+  document.getElementById("dayempty-name").textContent=DAYS[day];
   document.getElementById("blocks").innerHTML=BLOCKS.map((b,bi)=>{
     const rows=vis.filter(t=>t.bi===bi);
-    return `<section class="block"><div class="rail"><div class="t">${b.from}<small>– ${b.to}</small></div><div class="name">${b.name}</div></div>
+    return `<section class="block"><div class="rail"><div class="t">${b.from}<small>– ${b.to}</small></div><div class="name">${b.name}</div>
+      <button class="plus" type="button" data-act="open" data-bi="${bi}" aria-expanded="${openForm===bi}"><span aria-hidden="true">+</span> Verseny</button></div>
     <div class="rows">${rows.length?rows.map(t=>`
       <label class="row ${t.mark||""} ${picked.has(t.id)?"picked":""} ${nm>=0&&t.min<nm?"past":""} ${next===t?"next":""}">
-        <input type="checkbox" id="c-${t.id}" data-id="${t.id}" ${picked.has(t.id)?"checked":""} aria-label="${t.time} ${t.site} ${t.title}">
-        <span class="time">${t.time}</span>
-        <span class="site ${t.site}">${t.site}</span>
-        <span class="buy">${t.buy}${t.yen?`<small>≈ ${Math.round(t.usd)} $</small>`:""}</span>
-        <span class="title">${t.title}${t.note?`<em>${t.note}</em>`:""}</span>
+        <input type="checkbox" id="c-${esc(t.id)}" data-id="${esc(t.id)}" ${picked.has(t.id)?"checked":""} aria-label="${esc(t.time+" "+t.site+" "+t.title)}">
+        <span class="time">${esc(t.time)}</span>
+        <span class="site ${esc(t.site)}">${esc(t.site)}</span>
+        <span class="buy">${esc(t.buy)}${t.yen?`<small>≈ ${Math.round(t.usd)} $</small>`:""}</span>
+        <span class="title">${esc(t.title)}<em>${[...fmtOf(t).filter(f=>f!=="pko").map(fLabel),t.note].filter(Boolean).map(esc).join(" · ")}</em></span>
         ${t.mark==="f"?'<span class="tag f">Fő</span>':t.mark==="s"?'<span class="tag s">Shot</span>':"<span></span>"}
-      </label>`).join(""):'<div class="empty">Ebben a sávban nincs a szűrőnek megfelelő verseny.</div>'}</div></section>`;
+        <button class="minus" type="button" data-act="del" data-id="${esc(t.id)}" aria-label="${esc(t.time+" "+t.title)} eltávolítása">−</button>
+      </label>`).join(""):'<div class="empty">Ebben a sávban nincs verseny. Az idősáv melletti „+ Verseny” gombbal adhatsz hozzá.</div>'}
+      ${openForm===bi?formHtml(bi):""}</div></section>`;
   }).join("");
   bag();
 }
 function bag(){
-  const sel=all.filter(t=>picked.has(t.id));
+  const picked=new Set(D().picked);const sel=items().filter(t=>picked.has(t.id));
+  document.getElementById("b-day").textContent=DAYS[day];
   document.getElementById("b-count").textContent=sel.length;
   document.getElementById("b-sum").textContent=fmt(sel.reduce((s,t)=>s+t.usd,0));
+  const warn=document.getElementById("b-warn");
+  if(undo){warn.innerHTML=`Eltávolítva: <b>${esc(undo.item.time+" "+undo.item.title)}</b> <button type="button" id="b-undo">Visszavonás</button>`;return}
   const shots=sel.filter(t=>t.mark==="s").length;
   // legnagyobb egyidejű terhelés: versenyek, amelyek 90 percen belül indultak egymáshoz képest
   let peak=0; sel.forEach(a=>{const c=sel.filter(b=>b.min<=a.min&&a.min-b.min<90).length;if(c>peak)peak=c});
@@ -297,22 +490,178 @@ function bag(){
   if(sel.length) w=peak>15?`Figyelem: egy időben akár ${peak} asztal is futhat, ez több a tervezett 15-nél.`
     :shots>2?`${shots} shot van bejelölve, a terv napi legfeljebb 1–2.`
     :`Csúcsterhelés kb. ${peak} asztal egyszerre.`;
-  document.getElementById("b-warn").textContent=w;
+  warn.textContent=w;
 }
-document.getElementById("blocks").addEventListener("change",e=>{
-  const id=e.target.dataset.id;if(!id)return;
-  e.target.checked?picked.add(id):picked.delete(id);
-  e.target.closest(".row").classList.toggle("picked",e.target.checked);save();bag();
+const blocksEl=document.getElementById("blocks");
+blocksEl.addEventListener("change",e=>{
+  const id=e.target.dataset.id;if(!id||e.target.type!=="checkbox")return;
+  const p=D().picked;const i=p.indexOf(id);
+  if(e.target.checked&&i<0)p.push(id);if(!e.target.checked&&i>=0)p.splice(i,1);
+  e.target.closest(".row").classList.toggle("picked",e.target.checked);save();bag();renderTabs();renderStats();
+});
+blocksEl.addEventListener("click",e=>{
+  const b=e.target.closest("[data-act]");if(!b)return;
+  if(b.dataset.act==="del"){
+    e.preventDefault();const id=b.dataset.id,d=D(),idx=d.items.findIndex(t=>t.id===id);if(idx<0)return;
+    undo={day,item:d.items[idx],picked:d.picked.includes(id)};
+    d.items.splice(idx,1);d.picked=d.picked.filter(x=>x!==id);save();
+    clearTimeout(undoTimer);undoTimer=setTimeout(()=>{undo=null;bag()},8000);render();
+  }else if(b.dataset.act==="open"){
+    openForm=openForm===+b.dataset.bi?-1:+b.dataset.bi;render();
+    if(openForm>=0)document.getElementById("a-title")?.focus();
+  }else if(b.dataset.act==="cancel"){openForm=-1;render()}
+});
+blocksEl.addEventListener("submit",e=>{
+  e.preventDefault();const f=e.target,v=Object.fromEntries(new FormData(f));
+  const err=f.querySelector(".err");const amt=parseFloat(String(v.buy).replace(",","."));
+  if(!/^\d{2}:\d{2}$/.test(v.time)){err.textContent="Add meg a kezdés időpontját.";return}
+  if(!(amt>0)){err.textContent="A buy-in legyen pozitív szám, például 22 vagy 16.50.";return}
+  if(!String(v.title).trim()){err.textContent="Írd be a verseny nevét.";return}
+  const buy=v.cur+(amt%1?amt.toFixed(2):String(amt));
+  const item={id:"u"+Date.now().toString(36)+Math.random().toString(36).slice(2,5),time:v.time,site:v.site,buy,title:String(v.title).trim(),mark:v.mark,note:String(v.note||"").trim()};
+  D().items.push(item);save();
+  openForm=-1;render();
+  const sec=enrich(item).bi;if(sec!==+f.dataset.bi){document.getElementById("b-warn").textContent=`Hozzáadva a(z) ${BLOCKS[sec].from}–${BLOCKS[sec].to} sávhoz, mert ${item.time}-kor kezdődik.`}
+});
+document.querySelector(".bag").addEventListener("click",e=>{
+  if(e.target.id!=="b-undo"||!undo)return;
+  const d=state.days[undo.day];d.items.push(undo.item);if(undo.picked)d.picked.push(undo.item.id);
+  undo=null;clearTimeout(undoTimer);save();render();
+});
+document.getElementById("days").addEventListener("click",e=>{
+  const b=e.target.closest("[data-day]");if(!b)return;day=+b.dataset.day;openForm=-1;undo=null;render();
+});
+document.getElementById("copy-wed").addEventListener("click",()=>{
+  D().items=TEMPLATE.map(t=>({...t,id:"d"+day+"-"+t.id}));D().picked=[];save();render();
+});
+document.getElementById("copy-prev").addEventListener("click",()=>{
+  for(let k=1;k<7;k++){const src=state.days[(day+7-k)%7];if(src.items.length){
+    D().items=src.items.map(t=>({...t,id:"d"+day+"-"+t.id.replace(/^d\d-/,"")}));D().picked=[];save();render();return}}
+});
+document.getElementById("d-reset").addEventListener("click",()=>{
+  const btn=document.getElementById("d-reset");
+  if(btn.dataset.arm!=="1"){btn.dataset.arm="1";btn.textContent="Biztosan? Koppints újra";setTimeout(()=>{btn.dataset.arm="";btn.textContent="Nap ürítése"},4000);return}
+  btn.dataset.arm="";btn.textContent="Nap ürítése";D().items=[];D().picked=[];save();render();
 });
 document.querySelectorAll("[data-site]").forEach(b=>b.addEventListener("click",()=>{
   site=b.dataset.site;document.querySelectorAll("[data-site]").forEach(x=>x.setAttribute("aria-pressed",x===b));render();
 }));
+document.getElementById("stakes").innerHTML='<span class="slbl">Buy-in</span>'+STAKES.map(([k,l])=>`<button class="chip st" type="button" id="st-${k}" data-stake="${k}" aria-pressed="false">${l}</button>`).join("");
+document.getElementById("stakes").addEventListener("click",e=>{const b=e.target.closest("[data-stake]");if(!b)return;const k=b.dataset.stake;
+  stakes.has(k)?stakes.delete(k):stakes.add(k);b.setAttribute("aria-pressed",stakes.has(k));render()});
+renderFmt();
+document.getElementById("fx-chips").addEventListener("click",e=>{const b=e.target.closest("[data-fmt]");if(!b)return;const k=b.dataset.fmt;excl.has(k)?excl.delete(k):excl.add(k);saveF();renderFmt();render()});
+document.getElementById("r-f").innerHTML=FORMATS.map(([k,l])=>`<option value="${k}">${l}</option>`).join("");
+document.getElementById("r-s").innerHTML=STAKES.map(([k,l])=>`<option value="${k}">${l}</option>`).join("");
+document.getElementById("r-add").addEventListener("click",()=>{const f=document.getElementById("r-f").value,sk=document.getElementById("r-s").value;
+  if(!rules.some(r=>r.f===f&&r.s===sk))rules.push({f,s:sk});saveF();renderFmt();render()});
+document.getElementById("rules").addEventListener("click",e=>{const b=e.target.closest("[data-rule]");if(!b)return;rules.splice(+b.dataset.rule,1);saveF();renderFmt();render()});
+document.getElementById("f-reset").addEventListener("click",()=>{excl.clear();rules=[];stakes.clear();document.querySelectorAll("[data-stake]").forEach(x=>x.setAttribute("aria-pressed","false"));saveF();renderFmt();render()});
 document.getElementById("f-main").addEventListener("click",e=>{onlyMain=!onlyMain;e.currentTarget.setAttribute("aria-pressed",onlyMain);render()});
-document.getElementById("b-main").addEventListener("click",()=>{all.filter(t=>t.mark==="f").forEach(t=>picked.add(t.id));save();render()});
-document.getElementById("b-clear").addEventListener("click",()=>{picked.clear();save();render()});
-render(); setInterval(render,60000);
+document.getElementById("b-main").addEventListener("click",()=>{const d=D();d.items.filter(t=>t.mark==="f").forEach(t=>{if(!d.picked.includes(t.id))d.picked.push(t.id)});save();render()});
+document.getElementById("b-clear").addEventListener("click",()=>{D().picked=[];save();render()});
+render(); setInterval(()=>{if(openForm<0)render()},60000);
+// képből beolvasás: a szöveget a böngészőben ismeri fel a Tesseract.js, semmi nem megy szerverre
+const imp={cands:[],busy:false};
+const impEl=id=>document.getElementById(id);
+function loadTess(){
+  if(window.Tesseract)return Promise.resolve();
+  return new Promise((ok,bad)=>{const s=document.createElement("script");
+    s.src="https://cdn.jsdelivr.net/npm/tesseract.js@5.1.1/dist/tesseract.min.js";s.onload=ok;s.onerror=()=>bad(new Error("load"));document.head.appendChild(s)});
+}
+// felnagyítás, szürkeárnyalat, sötét lobbi-képnél invertálás
+function prep(file){
+  return new Promise((ok,bad)=>{const url=URL.createObjectURL(file),img=new Image();
+    img.onload=()=>{const sc=Math.min(3,Math.max(1,1800/img.width));const c=document.createElement("canvas");
+      c.width=Math.round(img.width*sc);c.height=Math.round(img.height*sc);const x=c.getContext("2d");x.drawImage(img,0,0,c.width,c.height);
+      const d=x.getImageData(0,0,c.width,c.height),p=d.data;let sum=0;
+      for(let i=0;i<p.length;i+=4){const g=.299*p[i]+.587*p[i+1]+.114*p[i+2];p[i]=p[i+1]=p[i+2]=g;sum+=g}
+      if(sum/(p.length/4)<110)for(let i=0;i<p.length;i+=4){p[i]=p[i+1]=p[i+2]=255-p[i]}
+      x.putImageData(d,0,0);URL.revokeObjectURL(url);ok({canvas:c,thumb:URL.createObjectURL(file)})};
+    img.onerror=()=>bad(new Error("img"));img.src=url});
+}
+function siteOf(s){s=s.toLowerCase();if(/\bgg|ggpoker|ggmasters|bounty hunters|\bbh\b/.test(s))return"GG";if(/stars|pokerstars|\bps\b|\bacr\b/.test(s))return"Stars";if(/\bwpt|clubwpt/.test(s))return"WPT";return""}
+function parseText(text,defSite){
+  const out=[];let lastTime="";
+  const lines=text.split(/\n+/).map(l=>l.replace(/[|_~•·]/g," ").replace(/\s+/g," ").trim()).filter(l=>l.length>3);
+  for(let i=0;i<lines.length;i++){
+    let l=lines[i];
+    const tm=l.match(/\b([01]?\d|2[0-3])[:.]([0-5]\d)\s*(am|pm|de|du)?\b/i);
+    let pm=l.match(/([$¥€]|usd|cny)\s?(\d{1,4}(?:[.,]\d{1,2})?)|(\d{1,4}(?:[.,]\d{1,2})?)\s?([$¥€])/i);
+    if(tm&&!pm&&lines[i+1]&&!/\b\d{1,2}[:.]\d{2}\b/.test(lines[i+1])){const n=lines[i+1].match(/([$¥€])\s?(\d{1,4}(?:[.,]\d{1,2})?)/);if(n){l+=" "+lines[i+1];pm=n;i++}}
+    if(!pm)continue;
+    let time=lastTime;
+    if(tm){let h=+tm[1];const ap=(tm[3]||"").toLowerCase();if((ap==="pm"||ap==="du")&&h<12)h+=12;if((ap==="am"||ap==="de")&&h===12)h=0;time=String(h).padStart(2,"0")+":"+tm[2];lastTime=time}
+    if(!time)continue;
+    const cur=(pm[1]||pm[4]||"$").toLowerCase(),c=cur==="¥"||cur==="cny"?"¥":"$";
+    const amt=parseFloat((pm[2]||pm[3]).replace(",","."));if(!(amt>0))continue;
+    let title=l.replace(tm?tm[0]:"","").replace(pm[0],"").replace(/\/\s*[$¥€]?\s?\d+(?:[.,]\d+)?/g,"")
+      .replace(/\b(ggpoker|pokerstars|clubwpt)\b/ig,"").replace(/^\s*(gg|stars|wpt|acr)\b/i,"").replace(/[^\p{L}\p{N}\s\-+&'’.()]/gu," ").replace(/\s+/g," ").trim();
+    if(title.length<3)continue;
+    out.push({time,site:siteOf(l)||defSite,buy:c+(amt%1?amt.toFixed(2):String(amt)),title:title.slice(0,60),mark:"",note:""});
+  }
+  return out;
+}
+function dupOf(c){return D().items.some(t=>t.time===c.time&&t.site===c.site&&t.title.toLowerCase()===c.title.toLowerCase())}
+function renderImp(){
+  const box=impEl("imp-list");
+  if(!imp.cands.length){box.innerHTML="";impEl("imp-add").hidden=true;return}
+  const n=imp.cands.filter(c=>c.on).length;
+  impEl("imp-add").hidden=false;impEl("imp-add").textContent=`Kijelöltek hozzáadása ${DAYS[day].toLowerCase()} napra (${n})`;
+  box.innerHTML=imp.cands.map((c,i)=>`<div class="cand ${c.on?"on":""}">
+    <input type="checkbox" id="ic-${i}" data-i="${i}" data-f="on" ${c.on?"checked":""} aria-label="Felvétel">
+    <input id="it-${i}" data-i="${i}" data-f="time" type="time" value="${esc(c.time)}" aria-label="Kezdés">
+    <select id="is-${i}" data-i="${i}" data-f="site" aria-label="Terem">${SITES.map(([v,l])=>`<option value="${v}" ${c.site===v?"selected":""}>${l}</option>`).join("")}</select>
+    <input id="ib-${i}" data-i="${i}" data-f="buy" value="${esc(c.buy)}" aria-label="Buy-in">
+    <input id="in-${i}" class="nm" data-i="${i}" data-f="title" value="${esc(c.title)}" aria-label="Verseny neve">
+    <select id="im-${i}" data-i="${i}" data-f="mark" aria-label="Jelölés"><option value="">–</option><option value="f" ${c.mark==="f"?"selected":""}>Fő</option><option value="s" ${c.mark==="s"?"selected":""}>Shot</option></select>
+    ${c.dup?'<span class="dupe">már a listán</span>':""}</div>`).join("");
+}
+async function runImport(files){
+  if(imp.busy||!files.length)return;imp.busy=true;
+  const st=impEl("imp-status"),th=impEl("imp-thumbs");
+  st.textContent="Szövegfelismerő betöltése…";
+  try{await loadTess()}catch(e){st.textContent="Nem sikerült betölteni a szövegfelismerőt. Ellenőrizd az internetkapcsolatot, és próbáld újra.";imp.busy=false;return}
+  let worker;
+  try{
+    let cur=0;
+    worker=await Tesseract.createWorker("eng",1,{logger:m=>{if(m.status==="recognizing text")st.textContent=`Beolvasás: ${cur}/${files.length}. kép, ${Math.round(m.progress*100)}%`}});
+    const found=[];
+    for(const f of files){cur++;st.textContent=`Beolvasás: ${cur}/${files.length}. kép…`;
+      const {canvas,thumb}=await prep(f);th.insertAdjacentHTML("beforeend",`<img src="${thumb}" alt="Feltöltött kép ${cur}">`);
+      const r=await worker.recognize(canvas);found.push(...parseText(r.data.text,impEl("imp-site").value));}
+    const seen=new Set();
+    const fresh=found.filter(c=>{const k=c.time+c.site+c.title.toLowerCase();if(seen.has(k))return false;seen.add(k);return true})
+      .map(c=>{const dup=dupOf(c);return {...c,dup,on:!dup}}).sort((a,b)=>toMin(a.time)-toMin(b.time));
+    imp.cands=imp.cands.concat(fresh);
+    st.textContent=fresh.length?`${fresh.length} versenyt találtam. Javítsd ki, ami rosszul jött ki, pipáld be, amit kérsz, és add hozzá.`
+      :"Ezen a képen nem találtam időpontot és buy-int együtt. Próbálj élesebb, egyenesebb képet, vagy vágd ki csak a versenylistát.";
+    renderImp();
+  }catch(e){st.textContent="A kép beolvasása nem sikerült. Próbáld újra másik képpel.";}
+  finally{if(worker)worker.terminate();imp.busy=false}
+}
+impEl("imp-cam").addEventListener("change",e=>{runImport([...e.target.files]);e.target.value=""});
+impEl("imp-file").addEventListener("change",e=>{runImport([...e.target.files]);e.target.value=""});
+const dz=impEl("imp");
+dz.addEventListener("dragover",e=>{e.preventDefault();dz.classList.add("drag")});
+dz.addEventListener("dragleave",()=>dz.classList.remove("drag"));
+dz.addEventListener("drop",e=>{e.preventDefault();dz.classList.remove("drag");runImport([...e.dataTransfer.files].filter(f=>f.type.startsWith("image/")))});
+document.addEventListener("paste",e=>{const fs=[...(e.clipboardData?.files||[])].filter(f=>f.type.startsWith("image/"));if(fs.length)runImport(fs)});
+impEl("imp-list").addEventListener("input",e=>{const i=+e.target.dataset.i,f=e.target.dataset.f;if(!f)return;
+  const c=imp.cands[i];c[f]=f==="on"?e.target.checked:e.target.value;if(f==="on"){e.target.parentElement.classList.toggle("on",c.on);renderImpBtn()}});
+function renderImpBtn(){impEl("imp-add").textContent=`Kijelöltek hozzáadása ${DAYS[day].toLowerCase()} napra (${imp.cands.filter(c=>c.on).length})`}
+impEl("imp-add").addEventListener("click",()=>{
+  let n=0;const st=impEl("imp-status");
+  imp.cands.filter(c=>c.on).forEach(c=>{
+    const amt=parseFloat(String(c.buy).replace(/[^\d.,]/g,"").replace(",","."));if(!c.time||!(amt>0)||!c.title.trim())return;
+    const cur=String(c.buy).includes("¥")?"¥":"$";
+    D().items.push({id:"i"+Date.now().toString(36)+Math.random().toString(36).slice(2,6),time:c.time,site:c.site,buy:cur+(amt%1?amt.toFixed(2):String(amt)),title:c.title.trim().slice(0,60),mark:c.mark,note:""});n++});
+  save();imp.cands=[];impEl("imp-thumbs").innerHTML="";renderImp();render();
+  st.textContent=n?`${n} verseny felkerült a(z) ${DAYS[day].toLowerCase()} listára.`:"Nem volt kijelölt, hiánytalan sor.";
+});
+impEl("imp-clear").addEventListener("click",()=>{imp.cands=[];impEl("imp-thumbs").innerHTML="";impEl("imp-status").textContent="";renderImp()});
 // új változat figyelése: a version.json-t gyorsítótár nélkül kérjük le
-const VERSION="3";
+const VERSION="4";
 async function checkVer(){try{const r=await fetch("version.json?t="+Date.now(),{cache:"no-store"});if(!r.ok)return;const v=(await r.json()).v;
   if(v&&v!==VERSION){const b=document.getElementById("upd");b.hidden=false;b.onclick=()=>{location.href=location.pathname+"?v="+v}}}catch(e){}}
 checkVer();setInterval(checkVer,60000);document.addEventListener("visibilitychange",()=>{if(!document.hidden)checkVer()});
