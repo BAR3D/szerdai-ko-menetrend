@@ -207,6 +207,8 @@ footer{color:var(--muted);font-size:13px;padding-block:28px;max-width:70ch}
   .row .buy{grid-column:4;grid-row:1}
   .row .tag{grid-column:4;grid-row:2;justify-self:end}
   .now{width:100%}
+  .controls{position:static}
+  .bag{padding-top:8px}.bag .in{gap:4px 16px}.bag b{font-size:22px}.bag .warn{font-size:12px;flex-basis:100%;order:5}.bag button{padding:7px 10px;font-size:12px}
 }
 @media (prefers-reduced-motion:reduce){.wall::after{animation:none}.row:hover::before{transition:none;opacity:0}}
 </style>
@@ -661,7 +663,7 @@ impEl("imp-add").addEventListener("click",()=>{
 });
 impEl("imp-clear").addEventListener("click",()=>{imp.cands=[];impEl("imp-thumbs").innerHTML="";impEl("imp-status").textContent="";renderImp()});
 // új változat figyelése: a version.json-t gyorsítótár nélkül kérjük le
-const VERSION="4";
+const VERSION="5";
 async function checkVer(){try{const r=await fetch("version.json?t="+Date.now(),{cache:"no-store"});if(!r.ok)return;const v=(await r.json()).v;
   if(v&&v!==VERSION){const b=document.getElementById("upd");b.hidden=false;b.onclick=()=>{location.href=location.pathname+"?v="+v}}}catch(e){}}
 checkVer();setInterval(checkVer,60000);document.addEventListener("visibilitychange",()=>{if(!document.hidden)checkVer()});
