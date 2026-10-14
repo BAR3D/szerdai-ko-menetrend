@@ -229,10 +229,10 @@ footer{color:var(--muted);font-size:13px;padding-block:28px;max-width:70ch}
 
   <section class="imp" id="imp" aria-label="Beolvasás képből">
     <div class="imp-h">
-      <div><h2>Beolvasás képből</h2><p>Fotózd le a lobbit vagy a listát, vagy válassz képernyőképet a képeid közül. A szöveget a saját eszközöd olvassa ki, a kép nem kerül fel sehova.</p></div>
+      <div><h2>Beolvasás képből</h2><p>Egy listához annyi képet adhatsz, amennyit csak kell: a galériából egyszerre többet is kijelölhetsz, vagy egymás után több fotót készíthetsz, és a találatok összeadódnak. Gépen be is húzhatod vagy beillesztheted a képeket. A szöveget a saját eszközöd olvassa ki, a képek nem kerülnek fel sehova.</p></div>
       <div class="imp-btns">
-        <label class="btn gold" for="imp-cam">Fotó készítése</label><input id="imp-cam" type="file" accept="image/*" capture="environment" hidden>
-        <label class="btn" for="imp-file">Kép a galériából</label><input id="imp-file" type="file" accept="image/*" multiple hidden>
+        <label class="btn gold" for="imp-cam" id="imp-cam-l">Fotó készítése</label><input id="imp-cam" type="file" accept="image/*" capture="environment" hidden>
+        <label class="btn" for="imp-file">Képek a galériából (akár több is)</label><input id="imp-file" type="file" accept="image/*" multiple hidden>
         <span class="fg inl"><label for="imp-site">Ha nem derül ki, melyik terem:</label><select id="imp-site"><option value="GG">GG</option><option value="Stars">PokerStars</option><option value="WPT">WPT</option></select></span>
       </div>
     </div>
@@ -564,7 +564,7 @@ document.getElementById("b-main").addEventListener("click",()=>{const d=D();d.it
 document.getElementById("b-clear").addEventListener("click",()=>{D().picked=[];save();render()});
 render(); setInterval(()=>{if(openForm<0)render()},60000);
 // képből beolvasás: a szöveget a böngészőben ismeri fel a Tesseract.js, semmi nem megy szerverre
-const imp={cands:[],busy:false};
+const imp={cands:[],busy:false,n:0};
 const impEl=id=>document.getElementById(id);
 function loadTess(){
   if(window.Tesseract)return Promise.resolve();
@@ -619,8 +619,9 @@ function renderImp(){
     <select id="im-${i}" data-i="${i}" data-f="mark" aria-label="Jelölés"><option value="">–</option><option value="f" ${c.mark==="f"?"selected":""}>Fő</option><option value="s" ${c.mark==="s"?"selected":""}>Shot</option></select>
     ${c.dup?'<span class="dupe">már a listán</span>':""}</div>`).join("");
 }
+const impQueue=[];
 async function runImport(files){
-  if(imp.busy||!files.length)return;imp.busy=true;
+  if(!files.length)return;if(imp.busy){impQueue.push(...files);impEl("imp-status").textContent=`${impQueue.length} kép vár beolvasásra…`;return}imp.busy=true;
   const st=impEl("imp-status"),th=impEl("imp-thumbs");
   st.textContent="Szövegfelismerő betöltése…";
   try{await loadTess()}catch(e){st.textContent="Nem sikerült betölteni a szövegfelismerőt. Ellenőrizd az internetkapcsolatot, és próbáld újra.";imp.busy=false;return}
@@ -631,16 +632,17 @@ async function runImport(files){
     const found=[];
     for(const f of files){cur++;st.textContent=`Beolvasás: ${cur}/${files.length}. kép…`;
       const {canvas,thumb}=await prep(f);th.insertAdjacentHTML("beforeend",`<img src="${thumb}" alt="Feltöltött kép ${cur}">`);
-      const r=await worker.recognize(canvas);found.push(...parseText(r.data.text,impEl("imp-site").value));}
+      const r=await worker.recognize(canvas);found.push(...parseText(r.data.text,impEl("imp-site").value));imp.n++;}
+    impEl("imp-cam-l").textContent="Még egy fotó";
     const seen=new Set();
     const fresh=found.filter(c=>{const k=c.time+c.site+c.title.toLowerCase();if(seen.has(k))return false;seen.add(k);return true})
       .map(c=>{const dup=dupOf(c);return {...c,dup,on:!dup}}).sort((a,b)=>toMin(a.time)-toMin(b.time));
     imp.cands=imp.cands.concat(fresh);
-    st.textContent=fresh.length?`${fresh.length} versenyt találtam. Javítsd ki, ami rosszul jött ki, pipáld be, amit kérsz, és add hozzá.`
+    st.textContent=fresh.length?`${imp.n} kép beolvasva, most ${fresh.length} új versenyt találtam (összesen ${imp.cands.length}). Jöhet még kép, vagy javítsd ki, ami rosszul jött ki, pipáld be, amit kérsz, és add hozzá.`
       :"Ezen a képen nem találtam időpontot és buy-int együtt. Próbálj élesebb, egyenesebb képet, vagy vágd ki csak a versenylistát.";
     renderImp();
   }catch(e){st.textContent="A kép beolvasása nem sikerült. Próbáld újra másik képpel.";}
-  finally{if(worker)worker.terminate();imp.busy=false}
+  finally{if(worker)worker.terminate();imp.busy=false;if(impQueue.length)runImport(impQueue.splice(0))}
 }
 impEl("imp-cam").addEventListener("change",e=>{runImport([...e.target.files]);e.target.value=""});
 impEl("imp-file").addEventListener("change",e=>{runImport([...e.target.files]);e.target.value=""});
@@ -658,12 +660,12 @@ impEl("imp-add").addEventListener("click",()=>{
     const amt=parseFloat(String(c.buy).replace(/[^\d.,]/g,"").replace(",","."));if(!c.time||!(amt>0)||!c.title.trim())return;
     const cur=String(c.buy).includes("¥")?"¥":"$";
     D().items.push({id:"i"+Date.now().toString(36)+Math.random().toString(36).slice(2,6),time:c.time,site:c.site,buy:cur+(amt%1?amt.toFixed(2):String(amt)),title:c.title.trim().slice(0,60),mark:c.mark,note:""});n++});
-  save();imp.cands=[];impEl("imp-thumbs").innerHTML="";renderImp();render();
+  save();imp.cands=[];imp.n=0;impEl("imp-cam-l").textContent="Fotó készítése";impEl("imp-thumbs").innerHTML="";renderImp();render();
   st.textContent=n?`${n} verseny felkerült a(z) ${DAYS[day].toLowerCase()} listára.`:"Nem volt kijelölt, hiánytalan sor.";
 });
-impEl("imp-clear").addEventListener("click",()=>{imp.cands=[];impEl("imp-thumbs").innerHTML="";impEl("imp-status").textContent="";renderImp()});
+impEl("imp-clear").addEventListener("click",()=>{imp.cands=[];imp.n=0;impEl("imp-cam-l").textContent="Fotó készítése";impEl("imp-thumbs").innerHTML="";impEl("imp-status").textContent="";renderImp()});
 // új változat figyelése: a version.json-t gyorsítótár nélkül kérjük le
-const VERSION="5";
+const VERSION="6";
 async function checkVer(){try{const r=await fetch("version.json?t="+Date.now(),{cache:"no-store"});if(!r.ok)return;const v=(await r.json()).v;
   if(v&&v!==VERSION){const b=document.getElementById("upd");b.hidden=false;b.onclick=()=>{location.href=location.pathname+"?v="+v}}}catch(e){}}
 checkVer();setInterval(checkVer,60000);document.addEventListener("visibilitychange",()=>{if(!document.hidden)checkVer()});
