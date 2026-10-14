@@ -1,0 +1,292 @@
+<!doctype html>
+<html lang="hu">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="robots" content="noindex,nofollow">
+<style>:root{padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}body{margin:0}img{max-width:100%}[hidden]{display:none!important}</style>
+<title>Szerdai KO-menetrend</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Big+Shoulders+Display:wght@600;800;900&family=Figtree:wght@400;500;600;700&family=JetBrains+Mono:wght@500;700&display=swap">
+<style>
+/* Elrendezés: verseny-lobbi tábla — bal oldalt óriás időbélyeg-sín, jobbra a sávok sorai; fent fejléc + szűrők, alul ragadós „csomagom” sáv */
+:root{
+  --bg:#efeae0; --surface:#f8f5ee; --ink:#1d1b26; --muted:#6b6676; --line:#d9d2c3;
+  --brass:#a8741a; --brass-soft:#f1e2bf; --shot:#b2342b; --shot-soft:#f6dcd8;
+  --gg:#b8231f; --acr:#1f5fa8; --wpt:#2b7a4b;
+  --f-display:"Big Shoulders Display","Arial Narrow",Impact,sans-serif;
+  --f-body:"Figtree",system-ui,-apple-system,"Segoe UI",sans-serif;
+  --f-mono:"JetBrains Mono",ui-monospace,Consolas,monospace;
+}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
+  --bg:#14131b; --surface:#1d1c26; --ink:#ece7dc; --muted:#9b96a6; --line:#2f2d3b;
+  --brass:#e0ac4c; --brass-soft:#3a2f1a; --shot:#ef7a6e; --shot-soft:#3e2222;
+  --gg:#f06b5f; --acr:#6fa8ec; --wpt:#6cc791; color-scheme:dark}}
+:root[data-theme="dark"]{
+  --bg:#14131b; --surface:#1d1c26; --ink:#ece7dc; --muted:#9b96a6; --line:#2f2d3b;
+  --brass:#e0ac4c; --brass-soft:#3a2f1a; --shot:#ef7a6e; --shot-soft:#3e2222;
+  --gg:#f06b5f; --acr:#6fa8ec; --wpt:#6cc791; color-scheme:dark}
+
+*{box-sizing:border-box}
+body{background:var(--bg);color:var(--ink);font:400 15px/1.5 var(--f-body);padding:0 16px 120px}
+.wrap{max-width:980px;margin:0 auto}
+a{color:inherit}
+
+/* fejléc */
+header.hero{padding-block:40px 24px;display:grid;gap:18px}
+.eyebrow{font:700 12px/1 var(--f-mono);letter-spacing:.14em;text-transform:uppercase;color:var(--brass)}
+h1{font:900 clamp(52px,11vw,112px)/.86 var(--f-display);text-transform:uppercase;letter-spacing:-.01em;margin:0;text-wrap:balance}
+h1 span{color:var(--brass)}
+.lede{max-width:62ch;color:var(--muted);margin:0;font-size:16px}
+.stats{display:flex;flex-wrap:wrap;gap:10px 28px;font:600 13px/1.3 var(--f-body);color:var(--muted)}
+.stats b{display:block;font:800 34px/1 var(--f-display);color:var(--ink);font-variant-numeric:tabular-nums}
+
+/* jelmagyarázat + szűrők */
+.controls{position:sticky;top:env(safe-area-inset-top,0px);z-index:5;background:var(--bg);padding-block:12px;border-bottom:1px solid var(--line);display:flex;flex-wrap:wrap;gap:8px;align-items:center}
+.chip{font:600 13px/1 var(--f-body);border:1px solid var(--line);background:var(--surface);color:var(--ink);padding:9px 13px;border-radius:999px;cursor:pointer;display:inline-flex;gap:7px;align-items:center}
+.chip[aria-pressed="true"]{background:var(--ink);color:var(--bg);border-color:var(--ink)}
+.chip:focus-visible,.row input:focus-visible,button:focus-visible{outline:2px solid var(--brass);outline-offset:2px}
+.dot{width:8px;height:8px;border-radius:50%;display:inline-block}
+.spacer{flex:1}
+.now{font:700 12px/1.2 var(--f-mono);color:var(--muted);letter-spacing:.04em}
+.now b{color:var(--brass)}
+
+.legend{display:flex;flex-wrap:wrap;gap:6px 20px;font-size:13px;color:var(--muted);padding-block:14px 4px}
+.legend span{display:inline-flex;gap:6px;align-items:center}
+
+/* időblokkok */
+section.block{display:grid;grid-template-columns:150px 1fr;gap:0 24px;padding-block:28px;border-bottom:1px solid var(--line)}
+.rail{position:relative}
+.rail .t{position:sticky;top:76px;font:900 54px/.9 var(--f-display);font-variant-numeric:tabular-nums;color:var(--ink)}
+.rail .t small{display:block;font:600 22px/1 var(--f-display);color:var(--muted);margin-top:4px}
+.rail .name{position:sticky;top:150px;margin-top:10px;font:700 11px/1.3 var(--f-mono);letter-spacing:.12em;text-transform:uppercase;color:var(--brass)}
+.rows{display:grid;gap:2px;min-width:0}
+
+.row{display:grid;grid-template-columns:26px 58px 52px 78px 1fr auto;gap:12px;align-items:center;padding:9px 10px;border-radius:8px;cursor:pointer}
+.row:hover{background:var(--surface)}
+.row input{width:17px;height:17px;accent-color:var(--brass);margin:0;cursor:pointer}
+.time{font:700 14px/1 var(--f-mono);font-variant-numeric:tabular-nums}
+.site{font:700 11px/1 var(--f-mono);letter-spacing:.06em;padding:5px 0;text-align:center;border-radius:4px;border:1px solid currentColor}
+.site.GG{color:var(--gg)} .site.ACR{color:var(--acr)} .site.WPT{color:var(--wpt)}
+.buy{font:700 14px/1 var(--f-mono);font-variant-numeric:tabular-nums;text-align:right}
+.buy small{display:block;font:500 11px/1.2 var(--f-mono);color:var(--muted);margin-top:3px}
+.title{font-weight:500;min-width:0}
+.title em{display:block;font-style:normal;font-size:12.5px;color:var(--muted)}
+.tag{font:700 11px/1 var(--f-mono);letter-spacing:.06em;text-transform:uppercase;padding:5px 8px;border-radius:4px;white-space:nowrap}
+.tag.f{background:var(--brass-soft);color:var(--brass)}
+.tag.s{background:var(--shot-soft);color:var(--shot)}
+.row.f .title{font-weight:700}
+.row.picked{background:var(--brass-soft)}
+.row.past{opacity:.45}
+.row.next{box-shadow:inset 0 0 0 2px var(--brass)}
+.row.next .time::after{content:"KÖVETKEZŐ";display:block;font-size:9px;letter-spacing:.1em;color:var(--brass);margin-top:4px}
+.empty{color:var(--muted);font-size:14px;padding:10px}
+
+/* csomag-sáv */
+.bag{position:fixed;left:0;right:0;bottom:0;z-index:10;background:var(--ink);color:var(--bg);padding:12px 16px calc(12px + env(safe-area-inset-bottom,0px))}
+.bag .in{max-width:980px;margin:0 auto;display:flex;flex-wrap:wrap;gap:8px 24px;align-items:center}
+.bag b{font:800 26px/1 var(--f-display);font-variant-numeric:tabular-nums;color:var(--brass)}
+.bag .lbl{font:600 11px/1.2 var(--f-mono);letter-spacing:.1em;text-transform:uppercase;opacity:.7;display:block;margin-bottom:3px}
+.bag .warn{font-size:13px;opacity:.85;flex:1;min-width:180px}
+.bag button{font:600 13px/1 var(--f-body);background:transparent;color:var(--bg);border:1px solid currentColor;border-radius:999px;padding:9px 14px;cursor:pointer}
+
+footer{color:var(--muted);font-size:13px;padding-block:28px;max-width:70ch}
+
+@media (max-width:640px){
+  section.block{grid-template-columns:1fr;gap:12px}
+  .rail .t,.rail .name{position:static}
+  .rail{display:flex;align-items:baseline;gap:14px;flex-wrap:wrap}
+  .rail .t{font-size:40px}.rail .t small{display:inline;font-size:20px;margin-left:6px}
+  .row{grid-template-columns:22px 48px 1fr auto;gap:4px 10px}
+  .row .site{grid-column:2;grid-row:2;font-size:10px}
+  .row .time{grid-column:2;grid-row:1}
+  .row input{grid-row:1 / span 2}
+  .row .title{grid-column:3;grid-row:1 / span 2}
+  .row .buy{grid-column:4;grid-row:1}
+  .row .tag{grid-column:4;grid-row:2;justify-self:end}
+  .now{width:100%}
+}
+@media (prefers-reduced-motion:no-preference){.row{transition:background .15s}}
+</style>
+</head>
+<body>
+
+<div class="wrap">
+  <header class="hero">
+    <div class="eyebrow">Szerda · knockout-fókusz · GG · ACR · WPT</div>
+    <h1>Szerdai <span>KO</span>-menetrend</h1>
+    <p class="lede">Egy teljes szerdai grind délután egytől hajnali kettőig, 15 asztalra felfutva. Csak bounty- és mystery-versenyek. Jelöld be, mit indítasz, és alul látod, mennyi a napi buy-in.</p>
+    <div class="stats" id="stats"></div>
+  </header>
+
+  <div class="controls" role="toolbar" aria-label="Szűrők">
+    <button class="chip" data-site="all" aria-pressed="true" id="f-all">Mind</button>
+    <button class="chip" data-site="GG" aria-pressed="false" id="f-gg"><span class="dot" style="background:var(--gg)"></span>GG</button>
+    <button class="chip" data-site="ACR" aria-pressed="false" id="f-acr"><span class="dot" style="background:var(--acr)"></span>ACR</button>
+    <button class="chip" data-site="WPT" aria-pressed="false" id="f-wpt"><span class="dot" style="background:var(--wpt)"></span>WPT</button>
+    <button class="chip" id="f-main" aria-pressed="false">Csak fő versenyek</button>
+    <span class="spacer"></span>
+    <span class="now" id="now"></span>
+  </div>
+
+  <div class="legend">
+    <span><span class="tag f">Fő</span> fő verseny, ezekre építsd a napot</span>
+    <span><span class="tag s">Shot</span> drágább lövés, napi legfeljebb 1–2</span>
+    <span>¥-es versenyek: kb. 7 ¥ = 1 $</span>
+  </div>
+
+  <main id="blocks"></main>
+
+  <footer>Az időpontok helyi idő szerint értendők. A ¥-es nevezési díjakat kb. 7 ¥ = 1 $ árfolyammal számoltuk át. A Weekly Golden Bounty Day 1-ből a sok flight közül egyet érdemes lejátszani. A bejelöléseid csak ebben a böngészőben maradnak meg.</footer>
+</div>
+
+<div class="bag" aria-live="polite">
+  <div class="in">
+    <div><span class="lbl">Bejelölve</span><b id="b-count">0</b></div>
+    <div><span class="lbl">Napi buy-in</span><b id="b-sum">0 $</b></div>
+    <div class="warn" id="b-warn">Koppints egy sorra, hogy hozzáadd a napi csomagodhoz.</div>
+    <button id="b-main" type="button">Fő versenyek kijelölése</button>
+    <button id="b-clear" type="button">Törlés</button>
+  </div>
+</div>
+
+<script>
+const BLOCKS=[
+ {from:"13:00",to:"15:00",name:"Felfutás 15 asztalra",items:[
+  ["13:15","ACR","$33","Fast 6 PKO"],
+  ["13:30","GG","$54","APT Bounty Builder Deepstack","f"],
+  ["13:30","GG","$15","Rapid Knockout Bounty Hyper"],
+  ["13:30","ACR","$16.50","Bounty Builder"],
+  ["13:30","WPT","¥88","Bounty Showdown"],
+  ["14:15","GG","$8.88","Bounty Hunters Deepstack Turbo"],
+  ["14:30","GG","$25","Bounty Blast-Off","f"],
+  ["14:30","WPT","¥166","Prime Mystery Bounty"],
+  ["14:30","WPT","¥188","Mystery Millions Day 1"],
+  ["14:30","ACR","$33","Bounty Builder"],
+  ["14:35","ACR","$16.50","Hot Hyper PKO"]]},
+ {from:"15:00",to:"18:00",name:"Csúcsidő",items:[
+  ["15:15","GG","$54","Bounty Hunters Deepstack Turbo",null,"$5.40-es változat is van"],
+  ["15:30","GG","$15","APT Bounty Head Hunter 7-max","f"],
+  ["15:30","GG","$25","Ocean KO"],
+  ["15:30","WPT","$25","Weekly Golden Bounty Day 1","f","Egy flightot játssz a sok közül"],
+  ["15:30","ACR","$22","Bounty Builder"],
+  ["15:35","ACR","$55","Mystery Express"],
+  ["16:00","WPT","$5.50","Crazy Bounty 2-for-1"],
+  ["16:02","ACR","$33","Blazing Giant Mystery Bounty","f"],
+  ["16:05","GG","$54","Bounty Hunters Fifty Stack","f"],
+  ["16:05","WPT","¥388","Lucky Mystery Box Bounty"],
+  ["16:15","GG","$32","BH Deepstack Turbo"],
+  ["16:30","ACR","$27","Daily Eliminator PKO","f"],
+  ["16:30","GG","$88","Bounty Warm-Up","s"],
+  ["17:00","GG","$25","GGMasters Bounty Warm-Up","f"],
+  ["17:15","GG","$25","Bounty Deepstack Turbo"],
+  ["17:30","ACR","$11","Bounty Builder",null,"$44-es változat is van"],
+  ["17:35","GG","$44","Bounty Hunters Forty Stack","f"]]},
+ {from:"18:00",to:"21:00",name:"Main eventek",items:[
+  ["18:02","ACR","$22","Wednesday Chameleon PKO"],
+  ["18:30","GG","$54","Bounty Hunters Daily Main","f"],
+  ["18:30","ACR","$55","Mini Bounty Builder HR","f"],
+  ["18:30","ACR","$11","Mystery Bounty"],
+  ["18:30","WPT","$55","Bounty Brawl Main Event","f"],
+  ["19:30","GG","$25","Bounty Hunters 7-Max","f"],
+  ["19:30","ACR","$22","Mini Wednesday Surprise"],
+  ["19:30","ACR","$16.50","Bounty Builder"],
+  ["20:00","GG","$15","Mini Wednesday Wonderbox","f"],
+  ["20:05","WPT","$15","Mini Mystery Windfall"],
+  ["20:15","GG","$54","BH Deepstack Turbo"],
+  ["20:15","ACR","$55","Hot PKO"],
+  ["20:30","GG","$10.80","BH Deepstack Turbo"],
+  ["20:30","WPT","$15","Bounty Brawl Contender Clash"]]},
+ {from:"21:00",to:"02:00",name:"Késői szakasz, gyorsabb versenyek",items:[
+  ["21:00","GG","$25","GGMasters Bounty"],
+  ["21:30","GG","$32","Bounty King","f"],
+  ["21:30","ACR","$33","Meteor PKO"],
+  ["21:45","GG","$21.60","BH Hyper Special"],
+  ["22:02","ACR","$11","Mini Daily Cooldown Mystery"],
+  ["22:30","GG","$54","Bounty Hunters Encore","f"],
+  ["22:30","ACR","$22","Bounty Builder"],
+  ["22:45","GG","$10.80","BH Hyper Special"],
+  ["23:00","GG","$25","GGMasters Bounty Turbo"],
+  ["23:20","ACR","$27","Pulsar PKO"],
+  ["23:30","ACR","$55","Bounty Builder"],
+  ["23:35","ACR","$16.50","Hot Hyper PKO"],
+  ["00:00","GG","$66","Super Six 6-max Bounty Turbo"],
+  ["00:30","GG","$55","Hyper 5-max"],
+  ["00:30","ACR","$16.50","Bounty Builder"],
+  ["01:02","ACR","$11","Mini Wednesday Surprise Late"],
+  ["01:15","ACR","$44","Mystery Express"],
+  ["01:30","GG","$25","Last Call Bounty Hyper"]]}
+];
+const CNY=7;
+const all=[];
+BLOCKS.forEach((b,bi)=>b.items.forEach((it,i)=>{
+  const [time,site,buy,title,mark,note]=it;
+  const yen=buy.startsWith("¥"); const raw=parseFloat(buy.slice(1));
+  const usd=yen?raw/CNY:raw;
+  let [h,m]=time.split(":").map(Number); let min=h*60+m; if(h<6) min+=1440;
+  all.push({id:bi+"-"+i,bi,time,site,buy,title,mark,note,yen,usd,min});
+}));
+
+let picked=new Set(); try{picked=new Set(JSON.parse(localStorage.getItem("ko-szerda")||"[]"))}catch(e){}
+let site="all", onlyMain=false;
+const save=()=>{try{localStorage.setItem("ko-szerda",JSON.stringify([...picked]))}catch(e){}};
+const fmt=v=>(Math.round(v*100)/100).toLocaleString("hu-HU",{minimumFractionDigits:v%1?2:0,maximumFractionDigits:2})+" $";
+
+function nowMin(){const d=new Date();let m=d.getHours()*60+d.getMinutes();if(d.getHours()<6)m+=1440;return m}
+function isWed(){const d=new Date();const day=d.getDay();return day===3||(day===4&&d.getHours()<6)}
+
+document.getElementById("stats").innerHTML=[
+ [all.length,"verseny"],[all.filter(t=>t.mark==="f").length,"fő verseny"],
+ ["13 óra","13:00 – 02:00"],[3,"terem: GG, ACR, WPT"]
+].map(([n,l])=>`<div><b>${n}</b>${l}</div>`).join("");
+
+function render(){
+  const nm=isWed()?nowMin():-1;
+  const vis=all.filter(t=>(site==="all"||t.site===site)&&(!onlyMain||t.mark));
+  const next=nm<0?null:vis.find(t=>t.min>=nm);
+  document.getElementById("now").innerHTML=nm<0?"Ma nem szerda van, a teljes nap látszik"
+    :next?`Most ${new Date().toTimeString().slice(0,5)} · következő: <b>${next.time} ${next.site}</b>`:"A mai menetrend véget ért";
+  document.getElementById("blocks").innerHTML=BLOCKS.map((b,bi)=>{
+    const rows=vis.filter(t=>t.bi===bi);
+    return `<section class="block"><div class="rail"><div class="t">${b.from}<small>– ${b.to}</small></div><div class="name">${b.name}</div></div>
+    <div class="rows">${rows.length?rows.map(t=>`
+      <label class="row ${t.mark||""} ${picked.has(t.id)?"picked":""} ${nm>=0&&t.min<nm?"past":""} ${next===t?"next":""}">
+        <input type="checkbox" id="c-${t.id}" data-id="${t.id}" ${picked.has(t.id)?"checked":""} aria-label="${t.time} ${t.site} ${t.title}">
+        <span class="time">${t.time}</span>
+        <span class="site ${t.site}">${t.site}</span>
+        <span class="buy">${t.buy}${t.yen?`<small>≈ ${Math.round(t.usd)} $</small>`:""}</span>
+        <span class="title">${t.title}${t.note?`<em>${t.note}</em>`:""}</span>
+        ${t.mark==="f"?'<span class="tag f">Fő</span>':t.mark==="s"?'<span class="tag s">Shot</span>':"<span></span>"}
+      </label>`).join(""):'<div class="empty">Ebben a sávban nincs a szűrőnek megfelelő verseny.</div>'}</div></section>`;
+  }).join("");
+  bag();
+}
+function bag(){
+  const sel=all.filter(t=>picked.has(t.id));
+  document.getElementById("b-count").textContent=sel.length;
+  document.getElementById("b-sum").textContent=fmt(sel.reduce((s,t)=>s+t.usd,0));
+  const shots=sel.filter(t=>t.mark==="s").length;
+  // legnagyobb egyidejű terhelés: versenyek, amelyek 90 percen belül indultak egymáshoz képest
+  let peak=0; sel.forEach(a=>{const c=sel.filter(b=>b.min<=a.min&&a.min-b.min<90).length;if(c>peak)peak=c});
+  let w="Koppints egy sorra, hogy hozzáadd a napi csomagodhoz.";
+  if(sel.length) w=peak>15?`Figyelem: egy időben akár ${peak} asztal is futhat, ez több a tervezett 15-nél.`
+    :shots>2?`${shots} shot van bejelölve, a terv napi legfeljebb 1–2.`
+    :`Csúcsterhelés kb. ${peak} asztal egyszerre.`;
+  document.getElementById("b-warn").textContent=w;
+}
+document.getElementById("blocks").addEventListener("change",e=>{
+  const id=e.target.dataset.id;if(!id)return;
+  e.target.checked?picked.add(id):picked.delete(id);
+  e.target.closest(".row").classList.toggle("picked",e.target.checked);save();bag();
+});
+document.querySelectorAll("[data-site]").forEach(b=>b.addEventListener("click",()=>{
+  site=b.dataset.site;document.querySelectorAll("[data-site]").forEach(x=>x.setAttribute("aria-pressed",x===b));render();
+}));
+document.getElementById("f-main").addEventListener("click",e=>{onlyMain=!onlyMain;e.currentTarget.setAttribute("aria-pressed",onlyMain);render()});
+document.getElementById("b-main").addEventListener("click",()=>{all.filter(t=>t.mark==="f").forEach(t=>picked.add(t.id));save();render()});
+document.getElementById("b-clear").addEventListener("click",()=>{picked.clear();save();render()});
+render(); setInterval(render,60000);
+</script>
+</body>
+</html>
