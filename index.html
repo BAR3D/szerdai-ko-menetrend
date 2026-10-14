@@ -416,7 +416,10 @@ function renderFmt(){
   const n=excl.size+rules.length;document.getElementById("more-n").textContent=n?`${n} aktív`:"nincs aktív";
 }
 let day=todayIdx(), site="all", onlyMain=false, openForm=-1, undo=null, undoTimer=0;
-try{const h=location.hash.slice(1);const i=["hetfo","kedd","szerda","csutortok","pentek","szombat","vasarnap"].indexOf(h);if(i>=0)day=i}catch(e){}
+const SLUG=["hetfo","kedd","szerda","csutortok","pentek","szombat","vasarnap"];
+const dayFromHash=()=>{try{return SLUG.indexOf(location.hash.slice(1).toLowerCase())}catch(e){return -1}};
+if(dayFromHash()>=0)day=dayFromHash();
+addEventListener("hashchange",()=>{const i=dayFromHash();if(i>=0&&i!==day){day=i;openForm=-1;undo=null;render()}});
 const D=()=>state.days[day];
 const items=()=>D().items.map(enrich).sort((a,b)=>a.min-b.min);
 
@@ -531,7 +534,7 @@ document.querySelector(".bag").addEventListener("click",e=>{
   undo=null;clearTimeout(undoTimer);save();render();
 });
 document.getElementById("days").addEventListener("click",e=>{
-  const b=e.target.closest("[data-day]");if(!b)return;day=+b.dataset.day;openForm=-1;undo=null;render();
+  const b=e.target.closest("[data-day]");if(!b)return;day=+b.dataset.day;openForm=-1;undo=null;try{history.replaceState(null,"","#"+SLUG[day])}catch(e){}render();
 });
 document.getElementById("copy-wed").addEventListener("click",()=>{
   D().items=TEMPLATE.map(t=>({...t,id:"d"+day+"-"+t.id}));D().picked=[];save();render();
@@ -665,7 +668,7 @@ impEl("imp-add").addEventListener("click",()=>{
 });
 impEl("imp-clear").addEventListener("click",()=>{imp.cands=[];imp.n=0;impEl("imp-cam-l").textContent="Fotó készítése";impEl("imp-thumbs").innerHTML="";impEl("imp-status").textContent="";renderImp()});
 // új változat figyelése: a version.json-t gyorsítótár nélkül kérjük le
-const VERSION="6";
+const VERSION="7";
 async function checkVer(){try{const r=await fetch("version.json?t="+Date.now(),{cache:"no-store"});if(!r.ok)return;const v=(await r.json()).v;
   if(v&&v!==VERSION){const b=document.getElementById("upd");b.hidden=false;b.onclick=()=>{location.href=location.pathname+"?v="+v}}}catch(e){}}
 checkVer();setInterval(checkVer,60000);document.addEventListener("visibilitychange",()=>{if(!document.hidden)checkVer()});
