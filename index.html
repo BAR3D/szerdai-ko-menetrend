@@ -8,114 +8,134 @@
 <title>Szerdai KO-menetrend</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Big+Shoulders+Display:wght@600;800;900&family=Figtree:wght@400;500;600;700&family=JetBrains+Mono:wght@500;700&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,500;0,600;1,500&family=Big+Shoulders+Display:wght@600;800;900&family=Figtree:wght@400;500;600;700&family=JetBrains+Mono:wght@500;700&display=swap">
 <style>
-/* Elrendezés: verseny-lobbi tábla — bal oldalt óriás időbélyeg-sín, jobbra a sávok sorai; fent fejléc + szűrők, alul ragadós „csomagom” sáv */
+/* Elrendezés: fekete tükörcsempe-terem — a háttér fényes csempefal arany fugákkal, előtte lebegő zsetonok és lapok; a menetrend üveglapokon, bal oldalt arany időbélyeg-sín */
 :root{
-  --bg:#efeae0; --surface:#f8f5ee; --ink:#1d1b26; --muted:#6b6676; --line:#d9d2c3;
-  --brass:#a8741a; --brass-soft:#f1e2bf; --shot:#b2342b; --shot-soft:#f6dcd8;
-  --gg:#b8231f; --acr:#1f5fa8; --wpt:#2b7a4b;
-  --f-display:"Big Shoulders Display","Arial Narrow",Impact,sans-serif;
+  --bg:#07070a; --tile:#111117; --glass:rgba(255,255,255,.055); --glass-hi:rgba(255,255,255,.16);
+  --ink:#f3efe6; --muted:#a39e93; --line:rgba(214,178,106,.22);
+  --gold:#d8b46a; --gold-hi:#f7e2a8; --gold-lo:#8a6a2c; --gold-soft:rgba(216,180,106,.14);
+  --shot:#ff7d72; --shot-soft:rgba(255,125,114,.14);
+  --gg:#ff6a5e; --acr:#ff3b4a; --wpt:#5fd39a;
+  --f-display:"Cormorant Garamond","Didot","Bodoni MT",Georgia,serif;
+  --f-time:"Big Shoulders Display","Arial Narrow",Impact,sans-serif;
   --f-body:"Figtree",system-ui,-apple-system,"Segoe UI",sans-serif;
   --f-mono:"JetBrains Mono",ui-monospace,Consolas,monospace;
+  color-scheme:dark;
 }
-@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
-  --bg:#14131b; --surface:#1d1c26; --ink:#ece7dc; --muted:#9b96a6; --line:#2f2d3b;
-  --brass:#e0ac4c; --brass-soft:#3a2f1a; --shot:#ef7a6e; --shot-soft:#3e2222;
-  --gg:#f06b5f; --acr:#6fa8ec; --wpt:#6cc791; color-scheme:dark}}
-:root[data-theme="dark"]{
-  --bg:#14131b; --surface:#1d1c26; --ink:#ece7dc; --muted:#9b96a6; --line:#2f2d3b;
-  --brass:#e0ac4c; --brass-soft:#3a2f1a; --shot:#ef7a6e; --shot-soft:#3e2222;
-  --gg:#f06b5f; --acr:#6fa8ec; --wpt:#6cc791; color-scheme:dark}
-
 *{box-sizing:border-box}
-body{background:var(--bg);color:var(--ink);font:400 15px/1.5 var(--f-body);padding:0 16px 120px}
-.wrap{max-width:980px;margin:0 auto}
-a{color:inherit}
+html{background:var(--bg)}
+body{background:var(--bg);color:var(--ink);font:400 15px/1.5 var(--f-body);padding:0 16px 130px;min-height:100%;position:relative;overflow-x:hidden}
+
+/* tükörcsempe-fal */
+.wall{position:fixed;inset:0;z-index:0;pointer-events:none;
+  background:
+    linear-gradient(115deg,transparent 0 38%,rgba(255,255,255,.07) 46%,rgba(255,255,255,.015) 52%,transparent 60%),
+    linear-gradient(160deg,rgba(216,180,106,.08),transparent 45%),
+    repeating-linear-gradient(0deg,var(--line) 0 1px,transparent 1px 120px),
+    repeating-linear-gradient(90deg,var(--line) 0 1px,transparent 1px 120px),
+    radial-gradient(ellipse at 50% -10%,#1d1b24 0%,var(--bg) 70%)}
+.wall::after{content:"";position:absolute;inset:-50%;background:linear-gradient(115deg,transparent 45%,rgba(255,255,255,.06) 50%,transparent 55%);animation:sweep 14s linear infinite}
+@keyframes sweep{from{transform:translateX(-30%)}to{transform:translateX(30%)}}
+#fx{position:fixed;inset:0;width:100%;height:100%;z-index:1;pointer-events:none}
+.wrap{position:relative;z-index:2;max-width:1000px;margin:0 auto}
 
 /* fejléc */
-header.hero{padding-block:40px 24px;display:grid;gap:18px}
-.eyebrow{font:700 12px/1 var(--f-mono);letter-spacing:.14em;text-transform:uppercase;color:var(--brass)}
-h1{font:900 clamp(52px,11vw,112px)/.86 var(--f-display);text-transform:uppercase;letter-spacing:-.01em;margin:0;text-wrap:balance}
-h1 span{color:var(--brass)}
-.lede{max-width:62ch;color:var(--muted);margin:0;font-size:16px}
-.stats{display:flex;flex-wrap:wrap;gap:10px 28px;font:600 13px/1.3 var(--f-body);color:var(--muted)}
-.stats b{display:block;font:800 34px/1 var(--f-display);color:var(--ink);font-variant-numeric:tabular-nums}
+header.hero{padding-block:56px 34px;display:grid;gap:18px}
+.eyebrow{font:700 12px/1 var(--f-mono);letter-spacing:.24em;text-transform:uppercase;color:var(--gold)}
+h1{font:600 clamp(54px,11vw,118px)/.9 var(--f-display);margin:0;letter-spacing:-.01em;text-wrap:balance;
+  background:linear-gradient(180deg,var(--gold-hi) 0%,var(--gold) 45%,var(--gold-lo) 100%);-webkit-background-clip:text;background-clip:text;color:transparent;
+  -webkit-box-reflect:below -6px linear-gradient(transparent 55%,rgba(255,255,255,.22))}
+h1 i{font-style:italic;font-weight:500}
+.lede{max-width:60ch;color:var(--muted);margin:14px 0 0;font-size:16px}
+.stats{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px;margin-top:6px}
+.stat{padding:16px 16px 14px;border:1px solid var(--glass-hi);border-radius:4px;background:linear-gradient(150deg,rgba(255,255,255,.09),rgba(255,255,255,.02) 55%);backdrop-filter:blur(8px);font:600 12px/1.3 var(--f-body);color:var(--muted);letter-spacing:.04em}
+.stat b{display:block;font:800 36px/1 var(--f-time);color:var(--ink);font-variant-numeric:tabular-nums;margin-bottom:6px}
 
-/* jelmagyarázat + szűrők */
-.controls{position:sticky;top:env(safe-area-inset-top,0px);z-index:5;background:var(--bg);padding-block:12px;border-bottom:1px solid var(--line);display:flex;flex-wrap:wrap;gap:8px;align-items:center}
-.chip{font:600 13px/1 var(--f-body);border:1px solid var(--line);background:var(--surface);color:var(--ink);padding:9px 13px;border-radius:999px;cursor:pointer;display:inline-flex;gap:7px;align-items:center}
-.chip[aria-pressed="true"]{background:var(--ink);color:var(--bg);border-color:var(--ink)}
-.chip:focus-visible,.row input:focus-visible,button:focus-visible{outline:2px solid var(--brass);outline-offset:2px}
+/* szűrők */
+.controls{position:sticky;top:env(safe-area-inset-top,0px);z-index:5;padding-block:12px;display:flex;flex-wrap:wrap;gap:8px;align-items:center;
+  background:linear-gradient(var(--bg),rgba(7,7,10,.86));backdrop-filter:blur(10px);border-bottom:1px solid var(--line)}
+.chip{font:600 13px/1 var(--f-body);border:1px solid var(--glass-hi);background:var(--glass);color:var(--ink);padding:9px 14px;border-radius:2px;cursor:pointer;display:inline-flex;gap:7px;align-items:center}
+.chip:hover{border-color:var(--gold)}
+.chip[aria-pressed="true"]{background:linear-gradient(180deg,var(--gold-hi),var(--gold));color:#1a1408;border-color:var(--gold)}
+.chip:focus-visible,.row input:focus-visible,button:focus-visible{outline:2px solid var(--gold-hi);outline-offset:2px}
 .dot{width:8px;height:8px;border-radius:50%;display:inline-block}
 .spacer{flex:1}
 .now{font:700 12px/1.2 var(--f-mono);color:var(--muted);letter-spacing:.04em}
-.now b{color:var(--brass)}
-
-.legend{display:flex;flex-wrap:wrap;gap:6px 20px;font-size:13px;color:var(--muted);padding-block:14px 4px}
+.now b{color:var(--gold)}
+.legend{display:flex;flex-wrap:wrap;gap:6px 20px;font-size:13px;color:var(--muted);padding-block:16px 4px}
 .legend span{display:inline-flex;gap:6px;align-items:center}
 
-/* időblokkok */
-section.block{display:grid;grid-template-columns:150px 1fr;gap:0 24px;padding-block:28px;border-bottom:1px solid var(--line)}
-.rail{position:relative}
-.rail .t{position:sticky;top:76px;font:900 54px/.9 var(--f-display);font-variant-numeric:tabular-nums;color:var(--ink)}
-.rail .t small{display:block;font:600 22px/1 var(--f-display);color:var(--muted);margin-top:4px}
-.rail .name{position:sticky;top:150px;margin-top:10px;font:700 11px/1.3 var(--f-mono);letter-spacing:.12em;text-transform:uppercase;color:var(--brass)}
-.rows{display:grid;gap:2px;min-width:0}
+/* idősávok: üveglapok */
+section.block{display:grid;grid-template-columns:160px 1fr;gap:0 26px;margin-block:22px;padding:24px;border:1px solid var(--glass-hi);border-radius:4px;
+  background:linear-gradient(155deg,rgba(255,255,255,.07),rgba(255,255,255,.015) 40%,rgba(0,0,0,.25));backdrop-filter:blur(6px);
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.12),0 30px 60px -30px rgba(0,0,0,.8)}
+.rail .t{position:sticky;top:84px;font:900 56px/.9 var(--f-time);font-variant-numeric:tabular-nums;color:var(--ink)}
+.rail .t small{display:block;font:600 22px/1 var(--f-time);color:var(--muted);margin-top:6px}
+.rail .name{position:sticky;top:160px;margin-top:12px;font:italic 500 20px/1.15 var(--f-display);color:var(--gold)}
+.rows{display:grid;gap:4px;min-width:0}
 
-.row{display:grid;grid-template-columns:26px 58px 52px 78px 1fr auto;gap:12px;align-items:center;padding:9px 10px;border-radius:8px;cursor:pointer}
-.row:hover{background:var(--surface)}
-.row input{width:17px;height:17px;accent-color:var(--brass);margin:0;cursor:pointer}
+.row{position:relative;overflow:hidden;display:grid;grid-template-columns:26px 58px 62px 78px 1fr auto;gap:12px;align-items:center;padding:10px 12px;border-radius:2px;cursor:pointer;
+  background:linear-gradient(180deg,rgba(255,255,255,.035),rgba(255,255,255,.01));border:1px solid rgba(255,255,255,.05)}
+.row::before{content:"";position:absolute;top:0;bottom:0;left:-60%;width:40%;background:linear-gradient(100deg,transparent,rgba(255,255,255,.13),transparent);transform:skewX(-18deg);pointer-events:none;opacity:0}
+.row:hover{border-color:rgba(216,180,106,.4)}
+.row:hover::before{opacity:1;left:130%;transition:left .7s ease,opacity .1s}
+.row input{width:17px;height:17px;accent-color:var(--gold);margin:0;cursor:pointer}
 .time{font:700 14px/1 var(--f-mono);font-variant-numeric:tabular-nums}
-.site{font:700 11px/1 var(--f-mono);letter-spacing:.06em;padding:5px 0;text-align:center;border-radius:4px;border:1px solid currentColor}
-.site.GG{color:var(--gg)} .site.ACR{color:var(--acr)} .site.WPT{color:var(--wpt)}
-.buy{font:700 14px/1 var(--f-mono);font-variant-numeric:tabular-nums;text-align:right}
+.site{font:700 10.5px/1 var(--f-mono);letter-spacing:.05em;padding:5px 0;text-align:center;border-radius:2px;border:1px solid currentColor}
+.site.GG{color:var(--gg)} .site.Stars{color:var(--acr)} .site.WPT{color:var(--wpt)}
+.buy{font:700 14px/1 var(--f-mono);font-variant-numeric:tabular-nums;text-align:right;color:var(--gold-hi)}
 .buy small{display:block;font:500 11px/1.2 var(--f-mono);color:var(--muted);margin-top:3px}
 .title{font-weight:500;min-width:0}
 .title em{display:block;font-style:normal;font-size:12.5px;color:var(--muted)}
-.tag{font:700 11px/1 var(--f-mono);letter-spacing:.06em;text-transform:uppercase;padding:5px 8px;border-radius:4px;white-space:nowrap}
-.tag.f{background:var(--brass-soft);color:var(--brass)}
-.tag.s{background:var(--shot-soft);color:var(--shot)}
+.tag{font:700 10.5px/1 var(--f-mono);letter-spacing:.08em;text-transform:uppercase;padding:5px 8px;border-radius:2px;white-space:nowrap}
+.tag.f{background:var(--gold-soft);color:var(--gold-hi);border:1px solid rgba(216,180,106,.35)}
+.tag.s{background:var(--shot-soft);color:var(--shot);border:1px solid rgba(255,125,114,.35)}
 .row.f .title{font-weight:700}
-.row.picked{background:var(--brass-soft)}
-.row.past{opacity:.45}
-.row.next{box-shadow:inset 0 0 0 2px var(--brass)}
-.row.next .time::after{content:"KÖVETKEZŐ";display:block;font-size:9px;letter-spacing:.1em;color:var(--brass);margin-top:4px}
+.row.picked{background:linear-gradient(90deg,rgba(216,180,106,.22),rgba(216,180,106,.05));border-color:rgba(216,180,106,.55)}
+.row.past{opacity:.4}
+.row.next{box-shadow:inset 0 0 0 1px var(--gold-hi),0 0 24px -6px rgba(216,180,106,.6)}
+.row.next .time::after{content:"KÖVETKEZŐ";display:block;font-size:9px;letter-spacing:.1em;color:var(--gold);margin-top:4px}
 .empty{color:var(--muted);font-size:14px;padding:10px}
 
 /* csomag-sáv */
-.bag{position:fixed;left:0;right:0;bottom:0;z-index:10;background:var(--ink);color:var(--bg);padding:12px 16px calc(12px + env(safe-area-inset-bottom,0px))}
-.bag .in{max-width:980px;margin:0 auto;display:flex;flex-wrap:wrap;gap:8px 24px;align-items:center}
-.bag b{font:800 26px/1 var(--f-display);font-variant-numeric:tabular-nums;color:var(--brass)}
-.bag .lbl{font:600 11px/1.2 var(--f-mono);letter-spacing:.1em;text-transform:uppercase;opacity:.7;display:block;margin-bottom:3px}
-.bag .warn{font-size:13px;opacity:.85;flex:1;min-width:180px}
-.bag button{font:600 13px/1 var(--f-body);background:transparent;color:var(--bg);border:1px solid currentColor;border-radius:999px;padding:9px 14px;cursor:pointer}
+.bag{position:fixed;left:0;right:0;bottom:0;z-index:10;padding:12px 16px calc(12px + env(safe-area-inset-bottom,0px));
+  background:linear-gradient(180deg,rgba(24,22,28,.92),rgba(8,8,10,.97));backdrop-filter:blur(12px);border-top:1px solid var(--gold-lo);color:var(--ink)}
+.bag .in{max-width:1000px;margin:0 auto;display:flex;flex-wrap:wrap;gap:8px 26px;align-items:center}
+.bag b{font:800 28px/1 var(--f-time);font-variant-numeric:tabular-nums;color:var(--gold-hi)}
+.bag .lbl{font:600 10.5px/1.2 var(--f-mono);letter-spacing:.14em;text-transform:uppercase;color:var(--muted);display:block;margin-bottom:3px}
+.bag .warn{font-size:13px;color:var(--muted);flex:1;min-width:180px}
+.bag button{font:600 13px/1 var(--f-body);background:var(--glass);color:var(--ink);border:1px solid var(--glass-hi);border-radius:2px;padding:9px 14px;cursor:pointer}
+.bag button:first-of-type{background:linear-gradient(180deg,var(--gold-hi),var(--gold));color:#1a1408;border-color:var(--gold)}
 
 footer{color:var(--muted);font-size:13px;padding-block:28px;max-width:70ch}
 
+@media (max-width:720px){.stats{grid-template-columns:repeat(2,minmax(0,1fr))}}
 @media (max-width:640px){
-  section.block{grid-template-columns:1fr;gap:12px}
+  section.block{grid-template-columns:1fr;gap:14px;padding:16px 12px}
   .rail .t,.rail .name{position:static}
   .rail{display:flex;align-items:baseline;gap:14px;flex-wrap:wrap}
   .rail .t{font-size:40px}.rail .t small{display:inline;font-size:20px;margin-left:6px}
-  .row{grid-template-columns:22px 48px 1fr auto;gap:4px 10px}
-  .row .site{grid-column:2;grid-row:2;font-size:10px}
+  .row{grid-template-columns:22px 52px 1fr auto;gap:4px 10px}
   .row .time{grid-column:2;grid-row:1}
+  .row .site{grid-column:2;grid-row:2;font-size:10px}
   .row input{grid-row:1 / span 2}
   .row .title{grid-column:3;grid-row:1 / span 2}
   .row .buy{grid-column:4;grid-row:1}
   .row .tag{grid-column:4;grid-row:2;justify-self:end}
   .now{width:100%}
 }
-@media (prefers-reduced-motion:no-preference){.row{transition:background .15s}}
+@media (prefers-reduced-motion:reduce){.wall::after{animation:none}.row:hover::before{transition:none;opacity:0}}
 </style>
 </head>
 <body>
+<div class="wall" aria-hidden="true"></div>
+<canvas id="fx" aria-hidden="true"></canvas>
 
 <div class="wrap">
   <header class="hero">
-    <div class="eyebrow">Szerda · knockout-fókusz · GG · ACR · WPT</div>
-    <h1>Szerdai <span>KO</span>-menetrend</h1>
+    <div class="eyebrow">Szerda · knockout-fókusz · GG · PokerStars · WPT</div>
+    <h1>Szerdai <i>KO</i>-menetrend</h1>
     <p class="lede">Egy teljes szerdai grind délután egytől hajnali kettőig, 15 asztalra felfutva. Csak bounty- és mystery-versenyek. Jelöld be, mit indítasz, és alul látod, mennyi a napi buy-in.</p>
     <div class="stats" id="stats"></div>
   </header>
@@ -123,7 +143,7 @@ footer{color:var(--muted);font-size:13px;padding-block:28px;max-width:70ch}
   <div class="controls" role="toolbar" aria-label="Szűrők">
     <button class="chip" data-site="all" aria-pressed="true" id="f-all">Mind</button>
     <button class="chip" data-site="GG" aria-pressed="false" id="f-gg"><span class="dot" style="background:var(--gg)"></span>GG</button>
-    <button class="chip" data-site="ACR" aria-pressed="false" id="f-acr"><span class="dot" style="background:var(--acr)"></span>ACR</button>
+    <button class="chip" data-site="Stars" aria-pressed="false" id="f-acr"><span class="dot" style="background:var(--acr)"></span>PokerStars</button>
     <button class="chip" data-site="WPT" aria-pressed="false" id="f-wpt"><span class="dot" style="background:var(--wpt)"></span>WPT</button>
     <button class="chip" id="f-main" aria-pressed="false">Csak fő versenyek</button>
     <span class="spacer"></span>
@@ -154,68 +174,68 @@ footer{color:var(--muted);font-size:13px;padding-block:28px;max-width:70ch}
 <script>
 const BLOCKS=[
  {from:"13:00",to:"15:00",name:"Felfutás 15 asztalra",items:[
-  ["13:15","ACR","$33","Fast 6 PKO"],
+  ["13:15","Stars","$33","Fast 6 PKO"],
   ["13:30","GG","$54","APT Bounty Builder Deepstack","f"],
   ["13:30","GG","$15","Rapid Knockout Bounty Hyper"],
-  ["13:30","ACR","$16.50","Bounty Builder"],
+  ["13:30","Stars","$16.50","Bounty Builder"],
   ["13:30","WPT","¥88","Bounty Showdown"],
   ["14:15","GG","$8.88","Bounty Hunters Deepstack Turbo"],
   ["14:30","GG","$25","Bounty Blast-Off","f"],
   ["14:30","WPT","¥166","Prime Mystery Bounty"],
   ["14:30","WPT","¥188","Mystery Millions Day 1"],
-  ["14:30","ACR","$33","Bounty Builder"],
-  ["14:35","ACR","$16.50","Hot Hyper PKO"]]},
+  ["14:30","Stars","$33","Bounty Builder"],
+  ["14:35","Stars","$16.50","Hot Hyper PKO"]]},
  {from:"15:00",to:"18:00",name:"Csúcsidő",items:[
   ["15:15","GG","$54","Bounty Hunters Deepstack Turbo",null,"$5.40-es változat is van"],
   ["15:30","GG","$15","APT Bounty Head Hunter 7-max","f"],
   ["15:30","GG","$25","Ocean KO"],
   ["15:30","WPT","$25","Weekly Golden Bounty Day 1","f","Egy flightot játssz a sok közül"],
-  ["15:30","ACR","$22","Bounty Builder"],
-  ["15:35","ACR","$55","Mystery Express"],
+  ["15:30","Stars","$22","Bounty Builder"],
+  ["15:35","Stars","$55","Mystery Express"],
   ["16:00","WPT","$5.50","Crazy Bounty 2-for-1"],
-  ["16:02","ACR","$33","Blazing Giant Mystery Bounty","f"],
+  ["16:02","Stars","$33","Blazing Giant Mystery Bounty","f"],
   ["16:05","GG","$54","Bounty Hunters Fifty Stack","f"],
   ["16:05","WPT","¥388","Lucky Mystery Box Bounty"],
   ["16:15","GG","$32","BH Deepstack Turbo"],
-  ["16:30","ACR","$27","Daily Eliminator PKO","f"],
+  ["16:30","Stars","$27","Daily Eliminator PKO","f"],
   ["16:30","GG","$88","Bounty Warm-Up","s"],
   ["17:00","GG","$25","GGMasters Bounty Warm-Up","f"],
   ["17:15","GG","$25","Bounty Deepstack Turbo"],
-  ["17:30","ACR","$11","Bounty Builder",null,"$44-es változat is van"],
+  ["17:30","Stars","$11","Bounty Builder",null,"$44-es változat is van"],
   ["17:35","GG","$44","Bounty Hunters Forty Stack","f"]]},
  {from:"18:00",to:"21:00",name:"Main eventek",items:[
-  ["18:02","ACR","$22","Wednesday Chameleon PKO"],
+  ["18:02","Stars","$22","Wednesday Chameleon PKO"],
   ["18:30","GG","$54","Bounty Hunters Daily Main","f"],
-  ["18:30","ACR","$55","Mini Bounty Builder HR","f"],
-  ["18:30","ACR","$11","Mystery Bounty"],
+  ["18:30","Stars","$55","Mini Bounty Builder HR","f"],
+  ["18:30","Stars","$11","Mystery Bounty"],
   ["18:30","WPT","$55","Bounty Brawl Main Event","f"],
   ["19:30","GG","$25","Bounty Hunters 7-Max","f"],
-  ["19:30","ACR","$22","Mini Wednesday Surprise"],
-  ["19:30","ACR","$16.50","Bounty Builder"],
+  ["19:30","Stars","$22","Mini Wednesday Surprise"],
+  ["19:30","Stars","$16.50","Bounty Builder"],
   ["20:00","GG","$15","Mini Wednesday Wonderbox","f"],
   ["20:05","WPT","$15","Mini Mystery Windfall"],
   ["20:15","GG","$54","BH Deepstack Turbo"],
-  ["20:15","ACR","$55","Hot PKO"],
+  ["20:15","Stars","$55","Hot PKO"],
   ["20:30","GG","$10.80","BH Deepstack Turbo"],
   ["20:30","WPT","$15","Bounty Brawl Contender Clash"]]},
  {from:"21:00",to:"02:00",name:"Késői szakasz, gyorsabb versenyek",items:[
   ["21:00","GG","$25","GGMasters Bounty"],
   ["21:30","GG","$32","Bounty King","f"],
-  ["21:30","ACR","$33","Meteor PKO"],
+  ["21:30","Stars","$33","Meteor PKO"],
   ["21:45","GG","$21.60","BH Hyper Special"],
-  ["22:02","ACR","$11","Mini Daily Cooldown Mystery"],
+  ["22:02","Stars","$11","Mini Daily Cooldown Mystery"],
   ["22:30","GG","$54","Bounty Hunters Encore","f"],
-  ["22:30","ACR","$22","Bounty Builder"],
+  ["22:30","Stars","$22","Bounty Builder"],
   ["22:45","GG","$10.80","BH Hyper Special"],
   ["23:00","GG","$25","GGMasters Bounty Turbo"],
-  ["23:20","ACR","$27","Pulsar PKO"],
-  ["23:30","ACR","$55","Bounty Builder"],
-  ["23:35","ACR","$16.50","Hot Hyper PKO"],
+  ["23:20","Stars","$27","Pulsar PKO"],
+  ["23:30","Stars","$55","Bounty Builder"],
+  ["23:35","Stars","$16.50","Hot Hyper PKO"],
   ["00:00","GG","$66","Super Six 6-max Bounty Turbo"],
   ["00:30","GG","$55","Hyper 5-max"],
-  ["00:30","ACR","$16.50","Bounty Builder"],
-  ["01:02","ACR","$11","Mini Wednesday Surprise Late"],
-  ["01:15","ACR","$44","Mystery Express"],
+  ["00:30","Stars","$16.50","Bounty Builder"],
+  ["01:02","Stars","$11","Mini Wednesday Surprise Late"],
+  ["01:15","Stars","$44","Mystery Express"],
   ["01:30","GG","$25","Last Call Bounty Hyper"]]}
 ];
 const CNY=7;
@@ -238,8 +258,8 @@ function isWed(){const d=new Date();const day=d.getDay();return day===3||(day===
 
 document.getElementById("stats").innerHTML=[
  [all.length,"verseny"],[all.filter(t=>t.mark==="f").length,"fő verseny"],
- ["13 óra","13:00 – 02:00"],[3,"terem: GG, ACR, WPT"]
-].map(([n,l])=>`<div><b>${n}</b>${l}</div>`).join("");
+ ["13 óra","13:00 – 02:00"],[3,"terem: GG, Stars, WPT"]
+].map(([n,l])=>`<div class="stat"><b>${n}</b>${l}</div>`).join("");
 
 function render(){
   const nm=isWed()?nowMin():-1;
@@ -287,6 +307,60 @@ document.getElementById("f-main").addEventListener("click",e=>{onlyMain=!onlyMai
 document.getElementById("b-main").addEventListener("click",()=>{all.filter(t=>t.mark==="f").forEach(t=>picked.add(t.id));save();render()});
 document.getElementById("b-clear").addEventListener("click",()=>{picked.clear();save();render()});
 render(); setInterval(render,60000);
+</script>
+<script>
+// lebegő zsetonok és kártyák a csempefal előtt
+(function(){
+  const cv=document.getElementById("fx"),ctx=cv.getContext("2d");
+  const still=matchMedia("(prefers-reduced-motion: reduce)").matches;
+  let W,H,dpr,items=[];
+  const CHIPS=[["#b8231f","#f3e9d6"],["#1f3f8f","#f3e9d6"],["#141418","#d8b46a"],["#1f7a4b","#f3e9d6"],["#d8b46a","#141418"],["#5b2a86","#f3e9d6"]];
+  const RANKS=["A","K","Q","J","10"],SUITS=[["♠","#141418"],["♥","#c4232c"],["♦","#c4232c"],["♣","#141418"]];
+  function resize(){dpr=Math.min(devicePixelRatio||1,2);W=innerWidth;H=innerHeight;cv.width=W*dpr;cv.height=H*dpr;ctx.setTransform(dpr,0,0,dpr,0,0)}
+  function spawn(y){
+    const card=Math.random()<.42, s=card?28+Math.random()*22:16+Math.random()*16;
+    return {card,s,x:Math.random()*W,y:y??H+60,vy:-(.18+Math.random()*.35)*(card?.8:1),vx:(Math.random()-.5)*.15,
+      rot:Math.random()*6.28,vr:(Math.random()-.5)*.006,flip:Math.random()*6.28,vf:.006+Math.random()*.012,
+      a:.22+Math.random()*.38,col:CHIPS[Math.random()*CHIPS.length|0],rank:RANKS[Math.random()*5|0],suit:SUITS[Math.random()*4|0]};
+  }
+  function rr(x,y,w,h,r){ctx.beginPath();ctx.moveTo(x+r,y);ctx.arcTo(x+w,y,x+w,y+h,r);ctx.arcTo(x+w,y+h,x,y+h,r);ctx.arcTo(x,y+h,x,y,r);ctx.arcTo(x,y,x+w,y,r);ctx.closePath()}
+  function chip(o){
+    const r=o.s,sx=Math.max(.15,Math.abs(Math.cos(o.flip)));
+    ctx.save();ctx.translate(o.x,o.y);ctx.rotate(o.rot);ctx.scale(sx,1);ctx.globalAlpha=o.a;
+    ctx.shadowColor="rgba(0,0,0,.6)";ctx.shadowBlur=14;
+    ctx.fillStyle=o.col[0];ctx.beginPath();ctx.arc(0,0,r,0,7);ctx.fill();ctx.shadowBlur=0;
+    ctx.fillStyle=o.col[1];
+    for(let i=0;i<6;i++){ctx.save();ctx.rotate(i*Math.PI/3);ctx.fillRect(-r*.16,-r,r*.32,r*.26);ctx.restore()}
+    ctx.strokeStyle=o.col[1];ctx.lineWidth=r*.07;ctx.setLineDash([r*.18,r*.14]);ctx.beginPath();ctx.arc(0,0,r*.66,0,7);ctx.stroke();ctx.setLineDash([]);
+    const g=ctx.createLinearGradient(-r,-r,r,r);g.addColorStop(0,"rgba(255,255,255,.35)");g.addColorStop(.5,"rgba(255,255,255,0)");
+    ctx.fillStyle=g;ctx.beginPath();ctx.arc(0,0,r,0,7);ctx.fill();ctx.restore();
+  }
+  function card(o){
+    const w=o.s,h=o.s*1.4,c=Math.cos(o.flip),sx=Math.max(.06,Math.abs(c)),front=c>0;
+    ctx.save();ctx.translate(o.x,o.y);ctx.rotate(o.rot);ctx.scale(sx,1);ctx.globalAlpha=o.a;
+    ctx.shadowColor="rgba(0,0,0,.6)";ctx.shadowBlur=18;rr(-w/2,-h/2,w,h,w*.1);
+    if(front){ctx.fillStyle="#f6f1e6";ctx.fill();ctx.shadowBlur=0;
+      ctx.fillStyle=o.suit[1];ctx.font=`700 ${w*.3}px Georgia,serif`;ctx.textAlign="left";ctx.textBaseline="top";
+      ctx.fillText(o.rank,-w/2+w*.1,-h/2+w*.08);ctx.font=`${w*.55}px Georgia,serif`;ctx.textAlign="center";ctx.textBaseline="middle";ctx.fillText(o.suit[0],0,h*.06);
+    }else{ctx.fillStyle="#141418";ctx.fill();ctx.shadowBlur=0;ctx.strokeStyle="#d8b46a";ctx.lineWidth=1;rr(-w/2+w*.1,-h/2+w*.1,w*.8,h-w*.2,w*.06);ctx.stroke();
+      ctx.font=`${w*.42}px Georgia,serif`;ctx.fillStyle="#d8b46a";ctx.textAlign="center";ctx.textBaseline="middle";ctx.fillText("♠",0,0)}
+    const g=ctx.createLinearGradient(-w/2,-h/2,w/2,h/2);g.addColorStop(0,"rgba(255,255,255,.25)");g.addColorStop(.45,"rgba(255,255,255,0)");
+    rr(-w/2,-h/2,w,h,w*.1);ctx.fillStyle=g;ctx.fill();ctx.restore();
+  }
+  function frame(){
+    ctx.clearRect(0,0,W,H);
+    for(const o of items){
+      if(!still){o.y+=o.vy;o.x+=o.vx+Math.sin(o.y/90)*.12;o.rot+=o.vr;o.flip+=o.vf}
+      if(o.y<-80)Object.assign(o,spawn());
+      o.card?card(o):chip(o);
+    }
+    if(!still)requestAnimationFrame(frame);
+  }
+  resize();addEventListener("resize",resize);
+  const n=Math.round(Math.min(26,Math.max(12,W*H/52000)));
+  for(let i=0;i<n;i++)items.push(spawn(Math.random()*H));
+  frame();
+})();
 </script>
 </body>
 </html>
